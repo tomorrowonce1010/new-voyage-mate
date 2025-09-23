@@ -1,0 +1,115 @@
+/* ======================================
+   弹窗样式规范 - Modal Standards
+   ====================================== */
+
+/* 
+ * 此文件定义了项目中所有弹窗的统一样式规范，
+ * 确保所有弹窗保持一致的外观和行为。
+ * 
+ * 请在创建新弹窗时遵循以下规范：
+ */
+
+/* 1. Z-INDEX 层级规范 */
+:root {
+  /* 导航栏层级 */
+  --z-navbar: 1000;
+  
+  /* 侧边栏层级 */
+  --z-sidebar: 1001;
+  
+  /* 普通弹窗层级 */
+  --z-modal: 10000;
+  
+  /* 次级弹窗层级（弹窗上的弹窗） */
+  --z-modal-secondary: 10001;
+  
+  /* 最高级弹窗层级（如确认对话框） */
+  --z-modal-top: 10002;
+}
+
+/* 2. 标准弹窗遮罩层样式 */
+.standard-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  animation: fadeIn 0.3s ease;
+}
+
+.standard-modal-overlay.show {
+  display: flex;
+}
+
+/* 3. 标准弹窗内容样式 */
+.standard-modal-content {
+  background: var(--bg-container);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  animation: slideUp 0.3s ease;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+/* 4. 弹窗动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 5. 响应式设计 */
+@media (max-width: 768px) {
+  .standard-modal-content {
+    margin: 20px;
+    width: calc(100vw - 40px);
+    max-width: none;
+  }
+}
+
+/* ======================================
+   命名规范指南
+   ====================================== */
+
+/*
+ * 为避免样式冲突，请使用以下命名规范：
+ * 
+ * 1. 组件专用弹窗：
+ *    - 格式：[组件名]-modal-overlay
+ *    - 示例：destination-modal-overlay, ai-modal-overlay
+ * 
+ * 2. 页面专用弹窗：
+ *    - 格式：[页面名]-modal-overlay
+ *    - 示例：edit-itinerary-modal-overlay, manage-modal-overlay
+ * 
+ * 3. 通用弹窗：
+ *    - 仅在单个文件内使用 .modal-overlay
+ *    - 避免在全局CSS中定义
+ * 
+ * 4. Z-INDEX 使用：
+ *    - 普通弹窗：z-index: var(--z-modal) 或 10000
+ *    - 次级弹窗：z-index: var(--z-modal-secondary) 或 10001
+ *    - 确认对话框：z-index: var(--z-modal-top) 或 10002
+ */ 

@@ -1,0 +1,16 @@
+# core dependencies
+sentence-transformers==2.6.1
+# choose torch variant; this is CPU build. Replace with torch==2.2.0+cu118 etc. if you have a matching CUDA toolkit
+torch>=2.6.0  # 升级以满足安全要求 CVE-2025-32434
+
+# service & API
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+
+# database & Elasticsearch
+mysql-connector-python==8.3.0
+elasticsearch==8.13.0
+
+# helpers
+tqdm==4.66.2
+python-dotenv==1.0.1 

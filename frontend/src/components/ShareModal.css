@@ -1,0 +1,335 @@
+.share-modal-overlay {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    bottom: auto;
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    z-index: 9999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+}
+
+.share-modal-overlay.show {
+    display: flex;
+}
+
+.share-modal-overlay .share-modal-content {
+    pointer-events: auto;
+}
+
+.share-modal-content {
+    background: var(--bg-container);
+    border-radius: 16px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    animation: modalSlideIn 0.3s ease-out;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.share-modal-header {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.share-modal-header h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 15px;
+    text-align: center;
+}
+
+.share-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+}
+
+.share-modal-close:hover {
+    color: #333;
+}
+
+.share-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.share-tip {
+    background-color: #e6f7ff;
+    border: 1px solid #91d5ff;
+    border-radius: 4px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #1890ff;
+    font-size: 14px;
+}
+
+.tip-icon {
+    font-size: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #333;
+}
+
+textarea {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    font-size: 14px;
+    min-height: 100px;
+    font-family: 'Righteous', 'Inter', 'Microsoft YaHei', Arial, sans-serif;
+}
+
+textarea.error {
+    border-color: #ff4d4f;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-height: 100px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.no-tags-message {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 14px;
+    font-style: italic;
+}
+
+.tag-button {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.tag-button:hover:not(:disabled) {
+    background: #93CCC3;
+    color: white;
+    border-color: #93CCC3;
+}
+
+.tag-button.selected {
+    background: #93CCC3;
+    color: white;
+    border-color: #93CCC3;
+}
+
+.tag-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.error-message {
+    color: #ff4d4f;
+    font-size: 14px;
+}
+
+.share-button, .copy-button, .share-again-button, .close-button {
+    border-radius: 8px;
+}
+
+.share-button {
+    padding: 10px 20px;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.share-button:hover {
+    background: #e53e3e;
+}
+
+.share-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 分享成功状态样式 */
+.share-success-container {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.success-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.success-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin: 0 0 12px 0;
+}
+
+.success-description {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.share-code-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.share-code-label {
+    display: block;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.share-code-display {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.share-code-text {
+    flex: 1;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1890ff;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.copy-button {
+  background: linear-gradient(135deg, #ff9a9e, #a8e6cf);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 154, 158, 0.3);
+}
+
+.copy-button:hover {
+  background: linear-gradient(135deg, #ff8a8e, #98d6bf);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 154, 158, 0.4);
+}
+
+.copy-button:active {
+  background: linear-gradient(135deg, #ff7a7e, #88c6b3);
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(255, 154, 158, 0.2);
+}
+
+.share-code-tip {
+    color: #666;
+    font-size: 12px;
+    margin: 0;
+    text-align: left;
+}
+
+.share-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.share-again-button {
+    padding: 10px 20px;
+    background: white;
+    color: #1890ff;
+    border: 1px solid #1890ff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.share-again-button:hover {
+    background: #f0f8ff;
+}
+
+.share-close-button {
+    background: linear-gradient(135deg, #ff9a9e, #a8e6cf);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 154, 158, 0.3);
+}
+
+.share-close-button:hover {
+  background: linear-gradient(135deg, #ff8a8e, #98d6bf);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 154, 158, 0.4);
+}

@@ -1,0 +1,143 @@
+.destination-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.destination-modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.destination-modal-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.destination-modal-title {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0;
+  font-weight: 600;
+}
+
+.destination-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #667eea;
+  outline: none;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.destination-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.modal-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.modal-btn-cancel {
+  background-color: #f3f4f6;
+  color: #666;
+}
+
+.modal-btn-cancel:hover {
+  background-color: #e5e7eb;
+}
+
+.modal-btn-submit {
+  background-color: #667eea;
+  color: white;
+}
+
+.modal-btn-submit:hover {
+  background-color: #5a6fd6;
+}
+
+.modal-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-group .error-message {
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+/* 添加日期选择器的样式 */
+.date-input-group {
+  display: flex;
+  gap: 12px;
+}
+
+.date-input-group input {
+  flex: 1;
+}
+
+/* 响应式设计 */
+@media (max-width: 640px) {
+  .destination-modal {
+    width: 95%;
+    padding: 20px;
+  }
+  
+  .destination-modal-actions {
+    flex-direction: column;
+  }
+  
+  .modal-btn {
+    width: 100%;
+  }
+} 
