@@ -1,0 +1,4 @@
+index_MySQL_to_ES：从MySQL中读取数据，转换为向量索引到ElasticSearch（我还需要再检查一下）
+requirements.txt：下载所需依赖，先pip install
+index_destinations.py：从MySQL-destinations表中读取数据并生成向量，存入elasticSearch（请保证elasticSearch正在运行，可通过访问端口9200检查）
+main.py：向外暴露/embed接口，调用models-chinese模型，对批量文本计算并返回嵌入向量

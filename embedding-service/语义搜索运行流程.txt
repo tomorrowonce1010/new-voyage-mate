@@ -1,0 +1,74 @@
+一、安装elasticSearch：
+我用的版本是9.0.3
+
+二、安装后运行：bin/elasticsearch.bat
+
+三、正常运行后，访问localhost:9200：
+可能出现安全验证（需登录）弹窗，此时需要关闭elasticSearch的安全功能：
+在 Windows 上关闭 Elasticsearch 的安全功能（x-pack security）很简单，只需改一份配置并重启即可。下面以目录 E:\ElasticSearch\elasticsearch-9.0.3-windows-x86_64\elasticsearch-9.0.3 为例演示，你的 8.x 版本操作完全相同。
+1. 停掉正在运行的 ES
+• 如果是在命令窗口里跑的 elasticsearch.bat，直接 Ctrl +C 终止即可。
+如果装成了 Windows 服务，可执行
+  E:\ElasticSearch\elasticsearch-9.0.3\bin\elasticsearch-service.bat stop
+2. 修改配置文件 elasticsearch.yml
+1) 打开
+   E:\ElasticSearch\elasticsearch-9.0.3\config\elasticsearch.yml
+用记事本 / VSCode 均可。
+2) 在文件末尾 新增或取消注释以下三行（确保每行左侧没有空格、TAB）：
+   xpack.security.enabled: false
+   xpack.security.transport.ssl.enabled: false
+   xpack.security.http.ssl.enabled: false   # 部分版本可省略
+说明：
+第一行关闭整体安全模块（账号、权限、API 认证全都禁用）。
+第二行、第三行同时关闭节点间/HTTP TLS，否则即使安全关闭仍可能报 SSL 相关错。
+如果你之前加过其他 xpack.security.* 设置，干脆全部注释掉，避免冲突。
+3) 保存并退出。
+3. 重新启动 Elasticsearch
+4. 验证
+在浏览器访问http://localhost:9200/
+如果直接返回 JSON 而没有弹出登录框，说明安全功能已关闭。例如（示例输出）：
+{
+  "name" : "DESKTOP-ABCD",
+  "cluster_name" : "elasticsearch",
+  "version" : { "number" : "8.13.2", ... },
+  "tagline" : "You Know, for Search"
+}
+
+四、再次运行elasticSearch，访问9200端口后看到如下信息：
+{
+  "name" : "TOMORROWONCE",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "3TeKL9hSRsagJbAeg7hp9g",
+  "version" : {
+    "number" : "9.0.3",
+    "build_flavor" : "default",
+    "build_type" : "zip",
+    "build_hash" : "cc7302afc8499e83262ba2ceaa96451681f0609d",
+    "build_date" : "2025-06-18T22:09:56.772581489Z",
+    "build_snapshot" : false,
+    "lucene_version" : "10.1.0",
+    "minimum_wire_compatibility_version" : "8.18.0",
+    "minimum_index_compatibility_version" : "8.0.0"
+  },
+  "tagline" : "You Know, for Search"
+}
+
+五、python微服务FastAPI：（texts->vector）
+调用本地大模型（embedding-service/models-chinese/）计算文本的768维嵌入向量
+使用方式：
+在embedding-service目录下，运行main.py上方注释中的指令：
+uvicorn main:app --host 0.0.0.0 --port 8000 
+即可在端口8000启动微服务，向外暴露POST /embed端口，访问localhost:8000/embed可取得嵌入向量的计算结果。
+请阅读embedding-service文件夹下的说明.txt
+
+六、从头开始启动项目步骤：
+1. 先启动MySQL和ES
+2. Python嵌入服务
+   cd embedding-service
+   uvicorn main:app --host 0.0.0.0 --port 8000
+3. 启动Spring Boot后端
+   cd backend
+   ./mvnw spring-boot:run
+4. 启动React前端
+   cd frontend
+   npm start
