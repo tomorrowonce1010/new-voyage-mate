@@ -209,7 +209,7 @@ public class ItineraryServiceImpl implements ItineraryService {
             day.setItinerary(itinerary);
             day.setDayNumber(i + 1);
             day.setDate(currentDate);
-            day.setTitle("第" + (i + 1) + "天 - 待规划");
+            day.setTitle("待规划");
             day.setFirstActivityId(null);  // 使用 null 而不是 -1
             day.setLastActivityId(null);   // 使用 null 而不是 -1
             

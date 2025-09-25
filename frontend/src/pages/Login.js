@@ -98,6 +98,13 @@ const Login = ({ onLogin }) => {
         if (result.success) {
           showMessage('登录成功！正在跳转到主页面...', 'success');
           
+          // 清除中转站数据
+          sessionStorage.removeItem('transferStationItems');
+          sessionStorage.removeItem('transferStationAttractions');
+          sessionStorage.removeItem('pendingAttractionToAdd');
+          localStorage.removeItem('pendingAttractionToAdd'); // 也清除旧的localStorage数据
+          localStorage.removeItem('transferStationAttractions'); // 也清除旧的localStorage数据
+          
           // 调用父组件的登录回调，让App.js处理路由跳转
           if (onLogin) {
             onLogin(result);

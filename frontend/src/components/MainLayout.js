@@ -87,7 +87,7 @@ const MainLayout = ({ user, onLogout }) => {
       window.dispatchEvent(event);
     } else if (location.pathname === '/manage') {
       // 如果在管理页面，存储要添加的景点并提示用户
-      localStorage.setItem('pendingAttractionToAdd', JSON.stringify(attraction));
+      sessionStorage.setItem('pendingAttractionToAdd', JSON.stringify(attraction));
       const shouldNavigate = window.confirm(
         `要将景点"${attraction.name}"添加到行程吗？\n\n点击"确定"将跳转到行程编辑页面，您需要先选择要编辑的行程。\n点击"取消"将取消操作。`
       );
@@ -100,7 +100,7 @@ const MainLayout = ({ user, onLogout }) => {
         }, 500);
       } else {
         // 用户取消，清除存储的景点
-        localStorage.removeItem('pendingAttractionToAdd');
+        sessionStorage.removeItem('pendingAttractionToAdd');
       }
     } else {
       // 如果不在编辑行程页面，提示用户

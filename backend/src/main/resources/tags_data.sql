@@ -1,5 +1,5 @@
 -- 标签数据
-use voyagemate;
+use try_voyagemate;
 
 INSERT INTO tags (tag) VALUES
 ('自然风光'),
