@@ -6,9 +6,9 @@ const TransferStation = ({ isVisible, onToggle, onAddToItinerary }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOverItem, setDragOverItem] = useState(null);
 
-  // 从localStorage加载中转站数据
+  // 从sessionStorage加载中转站数据
   useEffect(() => {
-    const savedAttractions = localStorage.getItem('transferStationAttractions');
+    const savedAttractions = sessionStorage.getItem('transferStationAttractions');
     if (savedAttractions) {
       try {
         setAttractions(JSON.parse(savedAttractions));
@@ -21,10 +21,10 @@ const TransferStation = ({ isVisible, onToggle, onAddToItinerary }) => {
 
 
 
-  // 保存中转站数据到localStorage
+  // 保存中转站数据到sessionStorage
   const saveAttractions = (newAttractions) => {
     setAttractions(newAttractions);
-    localStorage.setItem('transferStationAttractions', JSON.stringify(newAttractions));
+    sessionStorage.setItem('transferStationAttractions', JSON.stringify(newAttractions));
   };
 
 
