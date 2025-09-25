@@ -405,15 +405,15 @@ const EditItinerary = () => {
       }));
     };
 
-    // 检查是否有待添加的景点（从localStorage）
-    const pendingAttraction = localStorage.getItem('pendingAttractionToAdd');
+    // 检查是否有待添加的景点（从sessionStorage）
+    const pendingAttraction = sessionStorage.getItem('pendingAttractionToAdd');
     if (pendingAttraction) {
       try {
         const attraction = JSON.parse(pendingAttraction);
         console.log('发现待添加的景点:', attraction);
         
-        // 清除localStorage中的待添加景点
-        localStorage.removeItem('pendingAttractionToAdd');
+        // 清除sessionStorage中的待添加景点
+        sessionStorage.removeItem('pendingAttractionToAdd');
         
         // 延迟执行，确保组件完全加载
         setTimeout(() => {
@@ -421,7 +421,7 @@ const EditItinerary = () => {
         }, 1000);
       } catch (error) {
         console.error('解析待添加景点失败:', error);
-        localStorage.removeItem('pendingAttractionToAdd');
+        sessionStorage.removeItem('pendingAttractionToAdd');
       }
     }
 

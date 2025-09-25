@@ -388,7 +388,7 @@ const ViewItinerary = () => {
           {itineraryData.title}
         </h1>
         <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-          已出行的行程仅可浏览详情╮( •́ω•̀ )╭
+          该行程仅可浏览详情╮( •́ω•̀ )╭
         </p>
         <div className="itinerary-meta">
           <div className="meta-item">
