@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import './MainLayout.css';
 import TransferStation from './TransferStation';
+import UserGuideModal from './UserGuideModal';
 
 const MainLayout = ({ user, onLogout }) => {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ const MainLayout = ({ user, onLogout }) => {
   const [userMenuVisible, setUserMenuVisible] = useState(false);
   const [chatMenuOpen, setChatMenuOpen] = useState(false);
   const [transferStationVisible, setTransferStationVisible] = useState(false);
+  const [userGuideVisible, setUserGuideVisible] = useState(false);
 
   const menuItems = [
     {
@@ -147,61 +149,70 @@ const MainLayout = ({ user, onLogout }) => {
           <div className="logo-icon">✈️</div>
           <div className="logo-text">Voyage Mate</div>
         </div>
-        <div className="user-section" onClick={toggleUserMenu}>
-          <div className="user-avatar">
-            {user?.avatarUrl ? (
-              <img
-                src={`/api${user.avatarUrl}`}
-                alt="用户头像"
-                className="avatar-image"
-                onError={(e) => {
-                  console.log('头像加载失败:', e.target.src);
-                  e.target.style.display = 'none';
-                  // 显示默认头像
-                  const defaultAvatar = e.target.nextSibling;
-                  if (defaultAvatar) {
-                    defaultAvatar.style.display = 'flex';
-                  }
-                }}
-              />
-            ) : (
-              <div className="avatar-auto-generated">
-                {user?.username ? user.username.charAt(0) : '张'}
-              </div>
-            )}
-            {/* 默认头像（隐藏状态，用于头像加载失败时显示） */}
-            {user?.avatarUrl && (
-              <div className="avatar-auto-generated" style={{ display: 'none' }}>
-                {user?.username ? user.username.charAt(0) : '张'}
-              </div>
-            )}
-          </div>
-          <div className="user-info">
-            <div className="user-name">{user?.username || '张三'}</div>
-            <div className="user-status">{user?.status || '探索者'}</div>
-          </div>
-          <div className="user-menu-arrow">▼</div>
-          
-          {/* 用户下拉菜单 */}
-          {userMenuVisible && (
-            <div className="user-dropdown-menu">
-              <div 
-                className="user-menu-item"
-                onClick={() => handleUserMenuClick('profile')}
-              >
-                <span className="menu-icon">👤</span>
-                <span>个人资料</span>
-              </div>
-              <div className="user-menu-divider"></div>
-              <div 
-                className="user-menu-item logout"
-                onClick={() => handleUserMenuClick('logout')}
-              >
-                <span className="menu-icon">🚪</span>
-                <span>退出登录</span>
-              </div>
+        <div className="nav-actions">
+          <button 
+            className="guide-btn"
+            onClick={() => setUserGuideVisible(true)}
+            title="使用说明"
+          >
+            📖
+          </button>
+          <div className="user-section" onClick={toggleUserMenu}>
+            <div className="user-avatar">
+              {user?.avatarUrl ? (
+                <img
+                  src={`/api${user.avatarUrl}`}
+                  alt="用户头像"
+                  className="avatar-image"
+                  onError={(e) => {
+                    console.log('头像加载失败:', e.target.src);
+                    e.target.style.display = 'none';
+                    // 显示默认头像
+                    const defaultAvatar = e.target.nextSibling;
+                    if (defaultAvatar) {
+                      defaultAvatar.style.display = 'flex';
+                    }
+                  }}
+                />
+              ) : (
+                <div className="avatar-auto-generated">
+                  {user?.username ? user.username.charAt(0) : '张'}
+                </div>
+              )}
+              {/* 默认头像（隐藏状态，用于头像加载失败时显示） */}
+              {user?.avatarUrl && (
+                <div className="avatar-auto-generated" style={{ display: 'none' }}>
+                  {user?.username ? user.username.charAt(0) : '张'}
+                </div>
+              )}
             </div>
-          )}
+            <div className="user-info">
+              <div className="user-name">{user?.username || '张三'}</div>
+              <div className="user-status">{user?.status || '探索者'}</div>
+            </div>
+            <div className="user-menu-arrow">▼</div>
+            
+            {/* 用户下拉菜单 */}
+            {userMenuVisible && (
+              <div className="user-dropdown-menu">
+                <div 
+                  className="user-menu-item"
+                  onClick={() => handleUserMenuClick('profile')}
+                >
+                  <span className="menu-icon">👤</span>
+                  <span>个人资料</span>
+                </div>
+                <div className="user-menu-divider"></div>
+                <div 
+                  className="user-menu-item logout"
+                  onClick={() => handleUserMenuClick('logout')}
+                >
+                  <span className="menu-icon">🚪</span>
+                  <span>退出登录</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 
@@ -266,8 +277,14 @@ const MainLayout = ({ user, onLogout }) => {
         onToggle={toggleTransferStation}
         onAddToItinerary={handleAddToItinerary}
       />
+
+      {/* 使用说明Modal */}
+      <UserGuideModal 
+        isVisible={userGuideVisible}
+        onClose={() => setUserGuideVisible(false)}
+      />
     </div>
   );
 };
 
-export default MainLayout; 
+export default MainLayout;
