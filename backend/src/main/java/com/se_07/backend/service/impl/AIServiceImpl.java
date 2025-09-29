@@ -7,6 +7,7 @@ import com.se_07.backend.repository.DestinationRepository;
 import com.se_07.backend.repository.AttractionRepository;
 import com.se_07.backend.entity.Destination;
 import com.se_07.backend.entity.Attraction;
+import com.se_07.backend.service.SimpleRAGService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,9 @@ public class AIServiceImpl implements AIService {
     
     @Autowired
     private AttractionRepository attractionRepository;
+
+    @Autowired
+    private SimpleRAGService simpleRAGService;
     
     public AIServiceImpl() {
         this.restTemplate = new RestTemplate();
@@ -49,6 +53,17 @@ public class AIServiceImpl implements AIService {
     @Override
     public AIRecommendationResponse generateProfileRecommendation(AIRecommendationRequest request) {
         try {
+            // 1) 使用RAG服务根据用户偏好检索+生成答案
+            String question = buildProfileQuestionForRAG(request);
+            java.util.Map<String, Object> ragResult = simpleRAGService.askQuestion(question, 6);
+            if (ragResult != null && Boolean.TRUE.equals(ragResult.get("success"))) {
+                String answer = String.valueOf(ragResult.getOrDefault("answer", ""));
+                if (answer != null && !answer.isBlank()) {
+                    return AIRecommendationResponse.success(answer, "general");
+                }
+            }
+
+            // 2) RAG失败则回退到直接LLM
             String prompt = buildProfilePrompt(request);
             String response = callDeepSeekAPI(prompt);
             return AIRecommendationResponse.success(response, "general");
@@ -138,6 +153,36 @@ public class AIServiceImpl implements AIService {
         prompt.append("请用温馨友好的语调，内容要具体实用，字数控制在800字以内。");
         
         return prompt.toString();
+    }
+
+    /**
+     * 构造给RAG服务的提问，将用户偏好和候选目的地提示给RAG。
+     */
+    private String buildProfileQuestionForRAG(AIRecommendationRequest request) {
+        StringBuilder q = new StringBuilder();
+        q.append("根据以下用户档案，为其推荐3-5个中国城市（只从常见热门城市中选择），并说明推荐理由、特色亮点和最佳出行时间。\n\n");
+
+        if (request.getTravelPreferences() != null && !request.getTravelPreferences().isEmpty()) {
+            q.append("用户旅行偏好：").append(String.join("、", request.getTravelPreferences())).append("\n");
+        }
+        if (request.getSpecialNeeds() != null && !request.getSpecialNeeds().isEmpty()) {
+            q.append("特殊需求：").append(String.join("、", request.getSpecialNeeds())).append("\n");
+        }
+        if (request.getNaturalLanguageDescription() != null && !request.getNaturalLanguageDescription().trim().isEmpty()) {
+            q.append("用户描述：").append(request.getNaturalLanguageDescription()).append("\n");
+        }
+        if (request.getHistoricalDestinations() != null && !request.getHistoricalDestinations().isEmpty()) {
+            q.append("历史目的地：").append(String.join("、", request.getHistoricalDestinations())).append("\n");
+        }
+        if (request.getWishlistDestinations() != null && !request.getWishlistDestinations().isEmpty()) {
+            q.append("期望目的地：").append(String.join("、", request.getWishlistDestinations())).append("\n");
+        }
+
+        q.append("\n输出格式：\n");
+        q.append("- 每个城市用一段话描述，包含：推荐理由、特色亮点、最佳出行时间；\n");
+        q.append("- 语气友好，字数合计800字以内；\n");
+        q.append("- 若资料不足请直接跳过，不要编造。\n");
+        return q.toString();
     }
     
     private String buildItineraryPrompt(AIRecommendationRequest request) {

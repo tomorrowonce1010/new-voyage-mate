@@ -47,6 +47,32 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.guide-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  color: var(--text-primary);
+}
+
+.guide-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 .user-section {
   display: flex;
   align-items: center;
@@ -295,6 +321,15 @@
 
 /* 响应式设计 */
 @media (max-width: 768px) {
+  .nav-actions {
+    gap: 8px;
+  }
+
+  .guide-btn {
+    font-size: 1.2rem;
+    width: 32px;
+    height: 32px;
+  }
   .sidebar {
     transform: translateX(-100%);
     z-index: 1001;
