@@ -1,0 +1,76 @@
+# Dependabot configuration for automatic dependency updates
+version: 2
+updates:
+  # Maven dependencies for backend
+  - package-ecosystem: "maven"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "backend"
+    reviewers:
+      - "your-github-username"
+    commit-message:
+      prefix: "chore(backend)"
+      include: "scope"
+
+  # npm dependencies for frontend
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "frontend"
+    reviewers:
+      - "your-github-username"
+    commit-message:
+      prefix: "chore(frontend)"
+      include: "scope"
+
+  # pip dependencies for embedding-service
+  - package-ecosystem: "pip"
+    directory: "/embedding-service"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "python"
+    reviewers:
+      - "your-github-username"
+    commit-message:
+      prefix: "chore(embedding)"
+      include: "scope"
+
+  # pip dependencies for rag-service
+  - package-ecosystem: "pip"
+    directory: "/rag-service"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "python"
+    reviewers:
+      - "your-github-username"
+    commit-message:
+      prefix: "chore(rag)"
+      include: "scope"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
+

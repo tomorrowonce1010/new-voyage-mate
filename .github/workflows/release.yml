@@ -1,0 +1,123 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # Get the previous tag
+        PREVIOUS_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1) 2>/dev/null || echo "")
+        
+        if [ -z "$PREVIOUS_TAG" ]; then
+          CHANGELOG=$(git log --pretty=format:"- %s (%h)" ${{ github.ref_name }})
+        else
+          CHANGELOG=$(git log --pretty=format:"- %s (%h)" ${PREVIOUS_TAG}..${{ github.ref_name }})
+        fi
+        
+        echo "changelog<<EOF" >> $GITHUB_OUTPUT
+        echo "$CHANGELOG" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        body: |
+          ## 🎉 Release ${{ github.ref_name }}
+          
+          ### 📝 Changes
+          ${{ steps.changelog.outputs.changelog }}
+          
+          ### 📦 Build Artifacts
+          - Backend JAR file
+          - Frontend production build
+          
+          ### 📥 Installation
+          See [Local Development Guide](./LOCAL_DEVELOPMENT.md) for setup instructions.
+          
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-artifacts:
+    name: Build Release Artifacts
+    runs-on: ubuntu-latest
+    needs: create-release
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Extract version from tag
+      id: version
+      run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+    # Build Backend
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Build Backend
+      working-directory: ./backend
+      run: mvn clean package -DskipTests
+      
+    - name: Upload Backend JAR
+      run: |
+        gh release upload ${{ github.ref_name }} backend/target/*.jar
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    # Build Frontend
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+        
+    - name: Build Frontend
+      working-directory: ./frontend
+      run: |
+        npm ci
+        npm run build
+        tar -czf frontend-build-${{ steps.version.outputs.version }}.tar.gz build/
+        
+    - name: Upload Frontend build
+      run: |
+        gh release upload ${{ github.ref_name }} frontend/frontend-build-${{ steps.version.outputs.version }}.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify:
+    name: Release Notification
+    runs-on: ubuntu-latest
+    needs: build-artifacts
+    if: always()
+    
+    steps:
+    - name: Release Status
+      run: |
+        if [ "${{ needs.build-artifacts.result }}" == "success" ]; then
+          echo "✅ Release ${{ github.ref_name }} completed successfully!"
+        else
+          echo "❌ Release ${{ github.ref_name }} failed!"
+          exit 1
+        fi

@@ -1,0 +1,118 @@
+name: Python Services CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'embedding-service/**'
+      - 'rag-service/**'
+      - '.github/workflows/python-services.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'embedding-service/**'
+      - 'rag-service/**'
+      - '.github/workflows/python-services.yml'
+
+jobs:
+  test-embedding-service:
+    name: Test Embedding Service
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+        cache-dependency-path: embedding-service/requirements.txt
+        
+    - name: Install dependencies
+      working-directory: ./embedding-service
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov flake8
+        
+    - name: Lint with flake8
+      working-directory: ./embedding-service
+      run: |
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      continue-on-error: true
+        
+    - name: Run tests with pytest
+      working-directory: ./embedding-service
+      run: |
+        if [ -d "tests" ]; then
+          pytest tests/ --cov=. --cov-report=xml --cov-report=html
+        else
+          echo "No tests directory found, skipping tests"
+        fi
+      continue-on-error: true
+        
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v4
+      if: always() && hashFiles('embedding-service/coverage.xml') != ''
+      with:
+        files: ./embedding-service/coverage.xml
+        flags: embedding-service
+        name: embedding-service-coverage
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: false
+
+  test-rag-service:
+    name: Test RAG Service
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+        cache-dependency-path: rag-service/requirements.txt
+        
+    - name: Install dependencies
+      working-directory: ./rag-service
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov flake8
+        
+    - name: Lint with flake8
+      working-directory: ./rag-service
+      run: |
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      continue-on-error: true
+        
+    - name: Run tests with pytest
+      working-directory: ./rag-service
+      run: |
+        if [ -d "tests" ]; then
+          pytest tests/ --cov=. --cov-report=xml --cov-report=html
+        else
+          echo "No tests directory found, skipping tests"
+        fi
+      continue-on-error: true
+        
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v4
+      if: always() && hashFiles('rag-service/coverage.xml') != ''
+      with:
+        files: ./rag-service/coverage.xml
+        flags: rag-service
+        name: rag-service-coverage
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: false

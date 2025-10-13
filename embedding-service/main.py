@@ -12,7 +12,9 @@ from sentence_transformers import SentenceTransformer
 from typing import List
 import os
 
-MODEL_PATH = os.getenv("MODEL_PATH", "models-chinese")
+"""MODEL_PATH = os.getenv("MODEL_PATH", "models-chinese")
+"""
+MODEL_PATH = "./models-chinese"
 DEVICE = os.getenv("DEVICE", "cpu")  # 可设 cuda
 
 try:

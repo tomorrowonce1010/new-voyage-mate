@@ -1,0 +1,74 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend.yml'
+
+jobs:
+  build-and-test:
+    name: Build and Test Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+        
+    - name: Install dependencies
+      working-directory: ./frontend
+      run: npm ci
+      
+    - name: Run linter
+      working-directory: ./frontend
+      run: npm run lint --if-present || echo "No lint script found"
+      continue-on-error: true
+      
+    - name: Run tests
+      working-directory: ./frontend
+      run: |
+        if npm test -- --listTests 2>/dev/null | grep -q .; then
+          npm test -- --coverage --watchAll=false
+        else
+          echo "No tests found, skipping test execution"
+        fi
+      env:
+        CI: true
+      continue-on-error: true
+        
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v4
+      if: always() && hashFiles('frontend/coverage/lcov.info') != ''
+      with:
+        files: ./frontend/coverage/lcov.info
+        flags: frontend
+        name: frontend-coverage
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: false
+        
+    - name: Build production bundle
+      working-directory: ./frontend
+      run: npm run build
+      env:
+        CI: false
+        
+    - name: Archive build artifacts
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: frontend-build
+        path: frontend/build
+        retention-days: 7
