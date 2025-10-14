@@ -82,4 +82,4 @@ rag-service/data/processed/
 rag-service/index/merged_chunks.faiss
 
 # 或者，如果你不想上传任何 .faiss 文件：
-# *.faiss
+# *.faissrag-service/index/merged_chunks.faiss
