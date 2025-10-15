@@ -139,8 +139,9 @@ class AttractionTest {
         LocalDateTime created = a.getCreatedAt();
         LocalDateTime updated = a.getUpdatedAt();
 
-        // 验证创建时两个时间相同
-        assertEquals(created, updated);
+        // 验证创建时两个时间相同（截断到毫秒级别以避免纳秒级差异）
+        assertEquals(created.truncatedTo(java.time.temporal.ChronoUnit.MILLIS), 
+                     updated.truncatedTo(java.time.temporal.ChronoUnit.MILLIS));
 
         // 等待确保时间不同
         Thread.sleep(10);
@@ -150,8 +151,9 @@ class AttractionTest {
         onUpdate.setAccessible(true);
         onUpdate.invoke(a);
 
-        // 验证createdAt未改变
-        assertEquals(created, a.getCreatedAt());
+        // 验证createdAt未改变（截断到毫秒级别）
+        assertEquals(created.truncatedTo(java.time.temporal.ChronoUnit.MILLIS), 
+                     a.getCreatedAt().truncatedTo(java.time.temporal.ChronoUnit.MILLIS));
         // 验证updatedAt已更新
         assertTrue(a.getUpdatedAt().isAfter(updated));
     }

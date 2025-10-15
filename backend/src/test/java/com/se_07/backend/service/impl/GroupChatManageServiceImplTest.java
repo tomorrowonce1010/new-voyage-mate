@@ -29,6 +29,8 @@ public class GroupChatManageServiceImplTest {
     private GroupChatMemberRepository groupChatMemberRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private com.se_07.backend.repository.UserProfileRepository userProfileRepository;
     @InjectMocks
     private GroupChatManageServiceImpl groupChatManageService;
 
