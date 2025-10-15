@@ -27,6 +27,16 @@ app = FastAPI(title="Embedding Service", version="1.0")
 class Texts(BaseModel):
     texts: List[str] = Field(..., description="List of input sentences")
 
+@app.get("/health")
+async def health_check():
+    """健康检查端点"""
+    return {
+        "status": "healthy",
+        "service": "Embedding Service",
+        "model_loaded": model is not None,
+        "model_path": MODEL_PATH
+    }
+
 @app.post("/embed")
 async def embed(texts: Texts):
     if not texts.texts:

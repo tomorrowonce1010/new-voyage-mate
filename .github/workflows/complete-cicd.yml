@@ -142,13 +142,13 @@ jobs:
         
         # 测试 Backend
         echo "🏥 测试 Backend..."
-        # BACKEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_HOST }}:8080/actuator/health || echo "000")
-        # if [ "$BACKEND_STATUS" = "200" ]; then
-        #   echo "✅ Backend 健康检查通过 (HTTP 200)"
-        # else
-        #   echo "❌ Backend 健康检查失败 (HTTP $BACKEND_STATUS)"
-        #   exit 1
-        # fi
+        BACKEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_HOST }}:8080/actuator/health || echo "000")
+        if [ "$BACKEND_STATUS" = "200" ]; then
+          echo "✅ Backend 健康检查通过 (HTTP 200)"
+        else
+          echo "❌ Backend 健康检查失败 (HTTP $BACKEND_STATUS)"
+          exit 1
+        fi
         
         # 测试 Embedding Service
         echo "🤖 测试 Embedding Service..."

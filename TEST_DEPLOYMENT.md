@@ -96,20 +96,25 @@ sudo netstat -tlnp | grep -E '3000|8080|8000|8001|9200|3306'
 ### 步骤 1.5：手动健康检查
 
 ```bash
-# Backend
-curl http://localhost:8080/actuator/health
+# Backend (注意：context-path 是 /api)
+curl http://localhost:8080/api/actuator/health
 
-# Frontend
-curl -I http://localhost:3000
+# Frontend (静态健康检查文件)
+curl http://localhost:3000/health
+curl http://localhost:3000/health.json
 
-# Embedding
+# Embedding Service
 curl http://localhost:8000/health
 
-# RAG
+# RAG Service
 curl http://localhost:8001/health
 ```
 
-**预期结果**：所有返回 200 或 OK ✅
+**预期结果**：
+- Backend: 返回 JSON，包含 `{"status":"UP"}` ✅
+- Frontend: 返回 `OK` 或 JSON 格式的健康信息 ✅
+- Embedding: 返回 JSON，包含 `{"status":"healthy"}` ✅
+- RAG: 返回 JSON，包含 `{"status":"healthy"}` 或 `{"status":"degraded"}` ✅
 
 ---
 
