@@ -1,6 +1,7 @@
 name: FINAL CI/CD
 
 on:
+  workflow_dispatch:  # 支持手动触发
   pull_request:
     branches: [ main, develop ]
   push:
