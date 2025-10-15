@@ -243,12 +243,12 @@ jobs:
         echo "   Embedding:  http://${{ secrets.SERVER_HOST }}:8000"
         echo "   RAG:        http://${{ secrets.SERVER_HOST }}:8001"
 
-  # 阶段 10: 部署后验证
-  post-deployment:
-    name: ✅ 部署后验证
-    runs-on: ubuntu-latest
-    needs: deploy-production
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.deploy-production.result == 'success'
+  # # 阶段 10: 部署后验证
+  # post-deployment:
+  #   name: ✅ 部署后验证
+  #   runs-on: ubuntu-latest
+  #   needs: deploy-production
+  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.deploy-production.result == 'success'
     
     # steps:
     # - name: 健康检查和验证
