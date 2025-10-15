@@ -111,7 +111,7 @@ verify: lint test
 check:
 	@echo "🔍 检查服务状态..."
 	@echo "Backend (8080):"
-	@curl -s http://localhost:8080/actuator/health || echo "❌ Backend 未运行"
+	@curl -s http://localhost:8080/api/actuator/health || echo "❌ Backend 未运行"
 	@echo "\nFrontend (3000):"
 	@curl -s http://localhost:3000 > /dev/null && echo "✅ Frontend 运行中" || echo "❌ Frontend 未运行"
 	@echo "\nEmbedding Service (8000):"

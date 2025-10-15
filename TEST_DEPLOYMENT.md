@@ -200,7 +200,7 @@ http://1.94.200.25:3000   # Frontend
 http://1.94.200.25:8080   # Backend
 
 # 或在服务器上验证：
-curl http://1.94.200.25:8080/actuator/health
+curl http://1.94.200.25:8080/api/actuator/health
 curl -I http://1.94.200.25:3000
 ```
 

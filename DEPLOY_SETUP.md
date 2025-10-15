@@ -108,7 +108,7 @@ ssh -i ~/.ssh/github_deploy_key root@1.94.200.25 "echo '✅ SSH 连接成功'"
 
 ```bash
 # 检查 Backend
-curl http://1.94.200.25:8080/actuator/health
+curl http://1.94.200.25:8080/api/actuator/health
 
 # 检查 Frontend
 curl http://1.94.200.25:3000

@@ -142,7 +142,7 @@ jobs:
         
         # 测试 Backend
         echo "🏥 测试 Backend..."
-        BACKEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_HOST }}:8080/actuator/health || echo "000")
+        BACKEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_HOST }}:8080/api/actuator/health || echo "000")
         if [ "$BACKEND_STATUS" = "200" ]; then
           echo "✅ Backend 健康检查通过 (HTTP 200)"
         else
@@ -262,7 +262,7 @@ jobs:
         
         # # 生产环境健康检查
         # echo "🏥 生产环境健康检查..."
-        # HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_HOST }}:8080/actuator/health || echo "000")
+        # HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_HOST }}:8080/api/actuator/health || echo "000")
         
         # if [ "$HEALTH_STATUS" = "200" ]; then
         #   echo "✅ 生产环境运行正常"
