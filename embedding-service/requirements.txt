@@ -5,7 +5,7 @@ torch>=2.6.0  # 升级以满足安全要求 CVE-2025-32434
 
 # service & API
 fastapi==0.111.0
-uvicorn[standard]==0.29.0
+uvicorn[standard]==0.37.0
 
 # database & Elasticsearch
 mysql-connector-python==8.3.0
