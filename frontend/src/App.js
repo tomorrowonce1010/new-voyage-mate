@@ -17,24 +17,26 @@ import GroupDetail from './pages/GroupDetail';
 import Chat from './pages/Chat';
 import { installFetchInterceptor } from './utils/fetchInterceptor';
 
-// 安装全局 fetch 拦截器（模块顶级，保证只调用一次）
+// 安装全局 fetch 拦截器
 installFetchInterceptor();
+
+// 获取 API 基础 URL（根据环境变量）
+const API_BASE = process.env.REACT_APP_API_BASE_URL;
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // 添加加载状态
+  const [loading, setLoading] = useState(true);
 
   // 检查登录状态
   const checkLoginStatus = async () => {
     try {
-      const response = await fetch('/api/auth/status', {
+      const response = await fetch(`${API_BASE}/auth/status`, {
         method: 'GET',
-        credentials: 'include', // 重要：携带cookies
+        credentials: 'include',
       });
-      
       const result = await response.json();
-      
+
       if (result.success) {
         setIsAuthenticated(true);
         setUser({
@@ -43,11 +45,11 @@ function App() {
           email: result.email
         });
 
-        // 获取用户profile
+        // 获取用户 profile
         try {
-          const response2 = await fetch('/api/users/profile', {
+          const response2 = await fetch(`${API_BASE}/users/profile`, {
             method: 'GET',
-            credentials: 'include', // 重要：携带cookies
+            credentials: 'include',
           });
 
           if (response2.ok) {
@@ -63,14 +65,11 @@ function App() {
             }
           } else {
             console.warn('获取用户档案失败，状态码:', response2.status);
-            // 不因为获取档案失败而影响登录状态
           }
         } catch (profileError) {
           console.warn('获取用户档案时发生错误:', profileError);
-          // 不因为获取档案失败而影响登录状态
         }
       } else {
-        console.log('用户登录状态可能已过期，跳过编辑状态设置');
         setIsAuthenticated(false);
         setUser(null);
       }
@@ -97,9 +96,9 @@ function App() {
       email: loginResult.email
     });
 
-    // 登录成功后立即获取用户档案信息
+    // 登录后获取用户档案
     try {
-      const response = await fetch('/api/users/profile', {
+      const response = await fetch(`${API_BASE}/users/profile`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -126,7 +125,7 @@ function App() {
   // 处理登出
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', {
+      await fetch(`${API_BASE}/auth/logout`, {
         method: 'POST',
         credentials: 'include',
       });
@@ -138,7 +137,7 @@ function App() {
     }
   };
 
-  // 更新用户信息（用于Profile页面修改用户名或头像后同步）
+  // 更新用户信息（Profile 页面修改后）
   const updateUser = (userData) => {
     setUser(prevUser => ({
       ...prevUser,
@@ -147,60 +146,57 @@ function App() {
     console.log(user.avatarUrl);
   };
 
-  // 加载中显示
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontSize: '18px'
-      }}>
-        正在加载...
-      </div>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          fontSize: '18px'
+        }}>
+          正在加载...
+        </div>
     );
   }
 
   return (
-    <Router>
-      <Routes>
-        {/* 未登录时只能访问登录页面 */}
-        {!isAuthenticated ? (
-          <>
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </>
-        ) : (
-          /* 已登录时可以访问所有页面 */
-          <Route path="/" element={<MainLayout user={user} onLogout={handleLogout} />}>
-            <Route index element={<Navigate to="/explore" replace />} />
-            <Route path="explore" element={<Explore />} />
-            <Route path="manage" element={<Manage />} />
-            <Route path="community" element={<Community />} />
-            <Route path="chat">
-              <Route index element={<Navigate to="/chat/friend" replace />} />
-              <Route path="friend" element={<Chat />} />
-              <Route path="group" element={<Chat />} />
-            </Route>
-            <Route path="profile" element={<Profile user={user} onLogout={handleLogout} onUpdateUser={updateUser} />} />
-            <Route path="edit-itinerary/:id" element={<EditItinerary />} />
-            <Route path="edit-itinerary" element={<EditItinerary />} />
-            <Route path="view-itinerary/:id" element={<ViewItinerary />} />
-            <Route path="view-itinerary" element={<ViewItinerary />} />
-            <Route path="destination/:id" element={<DestinationDetail />} />
-            <Route path="travel-report" element={<TravelReport />} />
-            <Route path="user-homepage/:userId" element={<UserHomepage />} />
-            <Route path="group-travel" element={<GroupTravel />} />
-            <Route path="create-group" element={<CreateGroup />} />
-            <Route path="group-detail/:id" element={<GroupDetail />} />
-            <Route path="login" element={<Navigate to="/explore" replace />} />
-            <Route path="*" element={<Navigate to="/explore" replace />} />
-          </Route>
-        )}
-      </Routes>
-    </Router>
+      <Router>
+        <Routes>
+          {!isAuthenticated ? (
+              <>
+                <Route path="/login" element={<Login onLogin={handleLogin} />} />
+                <Route path="*" element={<Navigate to="/login" replace />} />
+              </>
+          ) : (
+              <Route path="/" element={<MainLayout user={user} onLogout={handleLogout} />}>
+                <Route index element={<Navigate to="/explore" replace />} />
+                <Route path="explore" element={<Explore />} />
+                <Route path="manage" element={<Manage />} />
+                <Route path="community" element={<Community />} />
+                <Route path="chat">
+                  <Route index element={<Navigate to="/chat/friend" replace />} />
+                  <Route path="friend" element={<Chat />} />
+                  <Route path="group" element={<Chat />} />
+                </Route>
+                <Route path="profile" element={<Profile user={user} onLogout={handleLogout} onUpdateUser={updateUser} />} />
+                <Route path="edit-itinerary/:id" element={<EditItinerary />} />
+                <Route path="edit-itinerary" element={<EditItinerary />} />
+                <Route path="view-itinerary/:id" element={<ViewItinerary />} />
+                <Route path="view-itinerary" element={<ViewItinerary />} />
+                <Route path="destination/:id" element={<DestinationDetail />} />
+                <Route path="travel-report" element={<TravelReport />} />
+                <Route path="user-homepage/:userId" element={<UserHomepage />} />
+                <Route path="group-travel" element={<GroupTravel />} />
+                <Route path="create-group" element={<CreateGroup />} />
+                <Route path="group-detail/:id" element={<GroupDetail />} />
+                <Route path="login" element={<Navigate to="/explore" replace />} />
+                <Route path="*" element={<Navigate to="/explore" replace />} />
+              </Route>
+          )}
+        </Routes>
+      </Router>
   );
 }
 
-export default App; 
+export default App;

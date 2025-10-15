@@ -2,6 +2,9 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Explore.css';
 
+// 获取 API 基础 URL（根据环境变量）
+const API_BASE = process.env.REACT_APP_API_BASE_URL;
+
 const Explore = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -92,27 +95,27 @@ const Explore = () => {
         case 'semantic_combined':
           // 语义搜索 + 标签组合（获取所有目的地进行标签过滤）
           const tagParams = searchTags.map(tag => `tags=${encodeURIComponent(tag)}`).join('&');
-          url = `http://localhost:8080/api/destinations/semantic-search-by-tags?${tagParams}&keyword=${encodeURIComponent(searchKeyword)}&size=1000`;
+          url = `${API_BASE}/destinations/semantic-search-by-tags?${tagParams}&keyword=${encodeURIComponent(searchKeyword)}&size=1000`;
           isPaginatedResult = false; // 语义搜索暂不支持分页，返回完整列表
           break;
           
         case 'semantic_search':
           // 纯语义搜索（获取所有目的地）
-          url = `http://localhost:8080/api/destinations/semantic-search?keyword=${encodeURIComponent(searchKeyword)}&size=1000`;
+          url = `${API_BASE}/destinations/semantic-search?keyword=${encodeURIComponent(searchKeyword)}&size=1000`;
           isPaginatedResult = false; // 语义搜索暂不支持分页，返回完整列表
           break;
           
         case 'tags':
           // 纯标签过滤（支持分页）
           const tagOnlyParams = searchTags.map(tag => `tags=${encodeURIComponent(tag)}`).join('&');
-          url = `http://localhost:8080/api/destinations/filter-by-tags?${tagOnlyParams}&page=${currentPage}&size=8`;
+          url = `${API_BASE}/destinations/filter-by-tags?${tagOnlyParams}&page=${currentPage}&size=8`;
           isPaginatedResult = true;
           break;
           
         case 'hot':
         default:
           // 热门目的地（支持分页）
-          url = `http://localhost:8080/api/destinations/hot?page=${currentPage}&size=8`;
+          url = `${API_BASE}/destinations/hot?page=${currentPage}&size=8`;
           isPaginatedResult = true;
           break;
       }
@@ -158,7 +161,7 @@ const Explore = () => {
 
   const fetchTags = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/destinations/tags');
+      const response = await fetch('${API_BASE}/destinations/tags');
       if (response.ok) {
         const tagList = await response.json();
         setTags(tagList);

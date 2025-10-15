@@ -6,6 +6,9 @@ import DestinationModal from '../components/DestinationModal';
 import FootprintModal from '../components/FootprintModal';
 import './Profile.css';
 
+// 获取 API 基础 URL（根据环境变量）
+const API_BASE = process.env.REACT_APP_API_BASE_URL;
+
 const Profile = ({ user, onLogout, onUpdateUser }) => {
   const navigate = useNavigate();
   
@@ -94,7 +97,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
     formData.append('avatar', file);
 
     try {
-      const response = await fetch('http://localhost:8080/api/users/avatar', {
+      const response = await fetch(`${API_BASE}/users/avatar`, {
         method: 'POST',
         credentials: 'include',
         body: formData
@@ -138,7 +141,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
   const fetchUserProfile = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('http://localhost:8080/api/users/profile', {
+      const response = await fetch('${API_BASE}/users/profile', {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -181,7 +184,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
   // 更新用户档案
   const updateUserProfile = async (updates) => {
     try {
-      const response = await fetch('http://localhost:8080/api/users/profile', {
+      const response = await fetch('${API_BASE}/users/profile', {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -206,7 +209,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
   // 更新用户偏好
   const updateUserPreferences = async (preferences) => {
     try {
-      const response = await fetch('http://localhost:8080/api/users/preferences', {
+      const response = await fetch('${API_BASE}/users/preferences', {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -660,7 +663,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
     const { destinationId, city } = deleteConfirmData;
 
     try {
-      const response = await fetch(`http://localhost:8080/api/users/destinations/wishlist/${destinationId}`, {
+      const response = await fetch(`${API_BASE}/users/destinations/wishlist/${destinationId}`, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -708,7 +711,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
   // 添加目的地
   const addDestination = async (formData) => {
     try {
-      const response = await fetch('http://localhost:8080/api/users/destinations/history', {
+      const response = await fetch('${API_BASE}/users/destinations/history', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -766,7 +769,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
   // 添加期望目的地
   const addWishlist = async (formData) => {
     try {
-      const response = await fetch('http://localhost:8080/api/users/destinations/wishlist', {
+      const response = await fetch('${API_BASE}/users/destinations/wishlist', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -824,7 +827,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
     if (window.confirm('确定要退出登录吗？')) {
       try {
         // 调用后端登出接口
-        await fetch('http://localhost:8080/api/auth/logout', {
+        await fetch('${API_BASE}/auth/logout', {
           method: 'POST',
           credentials: 'include',
         });
@@ -844,7 +847,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
   // API调用函数
   const callAIAPI = async (url, requestData) => {
     try {
-      const response = await fetch(`http://localhost:8080/api${url}`, {
+      const response = await fetch(`${API_BASE}${url}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -940,7 +943,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
         days: days
       };
 
-      const response = await fetch('http://localhost:8080/api/users/destinations/history', {
+      const response = await fetch('${API_BASE}/users/destinations/history', {
         method: 'POST',
         credentials: 'include',
         headers: {

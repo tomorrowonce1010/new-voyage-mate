@@ -1,6 +1,7 @@
 name: Python Services CI/CD
 
 on:
+  workflow_call:  # 允许被其他 workflow 调用
   push:
     branches: [ main, develop ]
     paths:
