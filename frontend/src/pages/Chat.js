@@ -96,7 +96,7 @@ export default function Chat() {
   const [groupMemberSearch, setGroupMemberSearch] = useState('');
   const [selectedGroupMembers, setSelectedGroupMembers] = useState([]);
   const searchTimeout = useRef();
-  const wsUrl = 'http://localhost:8080/api/ws'; // WebSocket端点
+  const wsUrl = `${window.location.origin}/api/ws`; // WebSocket端点
   const stompClientRef = useRef(null);
 
   // 将 groupList 和 groupLoading useState 移到这里
@@ -126,7 +126,7 @@ export default function Chat() {
     form.append('userId', myId);
     form.append('friendId', friendId);
     // 路径改为 /api/friends/delete，Content-Type 明确指定
-    const res = await fetch('http://localhost:8080/api/friends/delete', {
+    const res = await fetch('/api/friends/delete', {
       method: 'POST',
       body: form,
       credentials: 'include',
@@ -168,7 +168,7 @@ export default function Chat() {
     setFriendLoading(true);
     const form = new URLSearchParams();
     form.append('userId', myId);
-    fetch('http://localhost:8080/api/auth/friends/list', {
+    fetch('/api/auth/friends/list', {
       method: 'POST',
       body: form,
       credentials: 'include', // 携带cookie
@@ -183,7 +183,7 @@ export default function Chat() {
         }
         // 批量获取用户信息
         const users = await Promise.all(ids.map(id =>
-          fetch(`http://localhost:8080/api/users/homepage/${id}`, {
+          fetch(`/api/users/homepage/${id}`, {
             credentials: 'include'
           })
             .then(r => r.ok ? r.json() : null)
@@ -231,7 +231,7 @@ export default function Chat() {
       form.append('userId', myId);
       form.append('friendId', userId);
       // 路径改为 /friends/add，Content-Type 明确指定
-      const res = await fetch('http://localhost:8080/api/friends/add', {
+      const res = await fetch('/api/friends/add', {
         method: 'POST',
         body: form,
         credentials: 'include',
@@ -268,7 +268,7 @@ export default function Chat() {
     const form = new URLSearchParams();
     form.append('groupName', groupName);
     form.append('creatorUserId', creatorUserId);
-    const res = await fetch('http://localhost:8080/api/group/create', {
+    const res = await fetch('/api/group/create', {
       method: 'POST',
       body: form,
       credentials: 'include'
@@ -290,7 +290,7 @@ export default function Chat() {
     const form = new URLSearchParams();
     form.append('groupId', groupId);
     form.append('userId', userId);
-    const res = await fetch('http://localhost:8080/api/group/addUser', {
+    const res = await fetch('/api/group/addUser', {
       method: 'POST',
       body: form,
       credentials: 'include'
@@ -310,7 +310,7 @@ export default function Chat() {
     setGroupLoading(true);
     const form = new URLSearchParams();
     form.append('userId', myId);
-    fetch('http://localhost:8080/api/group/listByUser', {
+    fetch('/api/group/listByUser', {
       method: 'POST',
       body: form,
       credentials: 'include',
@@ -456,7 +456,7 @@ export default function Chat() {
     const form = new URLSearchParams();
     form.append('userId1', userId1);
     form.append('userId2', userId2);
-    const res = await fetch('http://localhost:8080/api/chat/history', {
+    const res = await fetch('/api/chat/history', {
       method: 'POST',
       body: form,
       credentials: 'include'
@@ -474,7 +474,7 @@ export default function Chat() {
   const fetchAllGroupHistories = React.useCallback((uid) => {
     if (!uid) return;
     console.log('[操作] 拉取所有群聊历史消息, userId:', uid);
-    fetch(`http://localhost:8080/api/group/historyByUser?userId=${uid}`, {
+    fetch(`/api/group/historyByUser?userId=${uid}`, {
       method: 'GET',
       credentials: 'include',
     })
@@ -705,7 +705,7 @@ export default function Chat() {
     const form = new URLSearchParams();
     form.append('groupId', group.id);
     form.append('userId', myId);
-    await fetch('http://localhost:8080/api/group/leave', {
+    await fetch('/api/group/leave', {
       method: 'POST',
       body: form,
       credentials: 'include',
@@ -885,7 +885,7 @@ export default function Chat() {
   // 拉取单个群聊历史消息
   const fetchGroupHistory = async (groupId, userId) => {
     // 兼容后端接口，拉全量再筛选
-    const res = await fetch(`http://localhost:8080/api/group/historyByUser?userId=${userId}`, {
+    const res = await fetch(`/api/group/historyByUser?userId=${userId}`, {
       method: 'GET',
       credentials: 'include'
     });
