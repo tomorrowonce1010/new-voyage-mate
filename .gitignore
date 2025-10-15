@@ -81,5 +81,6 @@ rag-service/data/processed/
 # 忽略这个特定的文件
 rag-service/index/merged_chunks.faiss
 
+uploads/
 # 或者，如果你不想上传任何 .faiss 文件：
 # *.faissrag-service/index/merged_chunks.faiss
