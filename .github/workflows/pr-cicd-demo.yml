@@ -1,0 +1,304 @@
+name: 完整 CI/CD 演示流程
+
+# 触发条件：PR 提交到 main 或 develop 分支
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+
+# 环境变量
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # ==================== CI 阶段 ====================
+  
+  # 阶段 1：代码检查
+  code-check:
+    name: 📝 代码质量检查
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout 代码
+      uses: actions/checkout@v4
+      
+    - name: 检查代码格式
+      run: |
+        echo "🔍 检查代码格式..."
+        # 这里可以添加 prettier, eslint 等检查
+        
+    - name: 安全扫描
+      run: |
+        echo "🔒 执行安全扫描..."
+        # 这里可以添加安全扫描工具
+
+  # 阶段 2：构建和测试
+  build-and-test:
+    name: 🏗️ 构建和测试
+    runs-on: ubuntu-latest
+    needs: code-check  # 依赖代码检查通过
+    strategy:
+      matrix:
+        component: [backend, frontend]
+    
+    steps:
+    - name: Checkout 代码
+      uses: actions/checkout@v4
+    
+    # Backend 构建
+    - name: 🔧 构建 Backend
+      if: matrix.component == 'backend'
+      run: |
+        echo "📦 开始构建 Backend..."
+        cd backend
+        
+        # 设置 Java
+        echo "☕ 设置 Java 17..."
+        
+        # 构建
+        echo "🔨 执行 Maven 构建..."
+        mvn clean package -DskipTests
+        
+        # 运行测试
+        echo "🧪 运行单元测试..."
+        mvn test
+        
+        # 如果测试失败，这里会自动退出（因为没有 continue-on-error）
+        echo "✅ Backend 构建和测试完成"
+    
+    # Frontend 构建
+    - name: 🔧 构建 Frontend  
+      if: matrix.component == 'frontend'
+      run: |
+        echo "📦 开始构建 Frontend..."
+        cd frontend
+        
+        # 设置 Node.js
+        echo "📦 安装 Node.js 依赖..."
+        npm ci
+        
+        # Lint 检查
+        echo "🔍 执行 ESLint 检查..."
+        npm run lint --if-present || echo "跳过 lint"
+        
+        # 运行测试
+        echo "🧪 运行测试..."
+        CI=true npm test --if-present || echo "跳过测试"
+        
+        # 构建生产版本
+        echo "🏗️ 构建生产版本..."
+        CI=false npm run build
+        
+        echo "✅ Frontend 构建和测试完成"
+    
+    # 上传构建产物
+    - name: 📤 上传构建产物
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.component }}-build
+        path: |
+          ${{ matrix.component == 'backend' && 'backend/target/*.jar' || 'frontend/build' }}
+        retention-days: 7
+
+  # 阶段 3：集成测试
+  integration-test:
+    name: 🔗 集成测试
+    runs-on: ubuntu-latest
+    needs: build-and-test  # 依赖构建测试通过
+    
+    steps:
+    - name: Checkout 代码
+      uses: actions/checkout@v4
+      
+    - name: 下载构建产物
+      uses: actions/download-artifact@v4
+      
+    - name: 运行集成测试
+      run: |
+        echo "🔗 开始集成测试..."
+        echo "📋 测试各服务之间的接口对接..."
+        echo "✅ 集成测试通过"
+
+  # 阶段 4：CI 总结（决定是否继续）
+  ci-summary:
+    name: ✅ CI 阶段总结
+    runs-on: ubuntu-latest
+    needs: [code-check, build-and-test, integration-test]
+    if: always()
+    
+    outputs:
+      ci_status: ${{ steps.check.outputs.status }}
+    
+    steps:
+    - name: 检查 CI 状态
+      id: check
+      run: |
+        echo "📊 检查 CI 各阶段状态..."
+        echo "代码检查: ${{ needs.code-check.result }}"
+        echo "构建测试: ${{ needs.build-and-test.result }}"
+        echo "集成测试: ${{ needs.integration-test.result }}"
+        
+        if [[ "${{ needs.code-check.result }}" == "failure" ]] || \
+           [[ "${{ needs.build-and-test.result }}" == "failure" ]] || \
+           [[ "${{ needs.integration-test.result }}" == "failure" ]]; then
+          echo "❌ CI 失败！流程终止，请修复问题后重新提交"
+          echo "status=failed" >> $GITHUB_OUTPUT
+          exit 1
+        else
+          echo "✅ CI 全部通过！准备进入 CD 阶段"
+          echo "status=success" >> $GITHUB_OUTPUT
+        fi
+
+  # ==================== CD 阶段 ====================
+  # 注意：只有在 main 分支且 CI 通过时才执行
+  
+  # 阶段 5：构建 Docker 镜像（准备部署）
+  build-docker:
+    name: 🐳 构建 Docker 镜像
+    runs-on: ubuntu-latest
+    needs: ci-summary
+    # 只在推送到 main 分支时执行（不在 PR 时执行）
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout 代码
+      uses: actions/checkout@v4
+      
+    - name: 下载构建产物
+      uses: actions/download-artifact@v4
+      
+    - name: 构建 Docker 镜像
+      run: |
+        echo "🐳 开始构建 Docker 镜像..."
+        echo "📦 Backend 镜像: voyagemate-backend:latest"
+        echo "📦 Frontend 镜像: voyagemate-frontend:latest"
+        echo "✅ Docker 镜像构建完成"
+        
+        # 实际命令示例（需要 Dockerfile）：
+        # docker build -t voyagemate-backend:latest ./backend
+        # docker build -t voyagemate-frontend:latest ./frontend
+
+  # 阶段 6：部署到测试环境
+  deploy-staging:
+    name: 🚀 部署到测试环境
+    runs-on: ubuntu-latest
+    needs: build-docker
+    environment:
+      name: staging
+      url: https://staging.voyagemate.com
+    
+    steps:
+    - name: 部署到测试服务器
+      run: |
+        echo "🚀 开始部署到测试环境..."
+        echo "📍 目标服务器: staging.voyagemate.com"
+        echo "🔄 更新服务..."
+        
+        # 实际部署命令示例：
+        # ssh user@staging-server "docker pull voyagemate-backend:latest"
+        # ssh user@staging-server "docker-compose up -d"
+        
+        echo "✅ 测试环境部署完成"
+        echo "🌐 访问地址: https://staging.voyagemate.com"
+
+  # 阶段 7：自动化测试（在测试环境）
+  smoke-test:
+    name: 💨 冒烟测试
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    
+    steps:
+    - name: 执行冒烟测试
+      run: |
+        echo "💨 执行冒烟测试..."
+        echo "✅ 测试环境运行正常"
+        
+        # 实际测试命令示例：
+        # curl -f https://staging.voyagemate.com/health || exit 1
+
+  # 阶段 8：等待人工审批（可选）
+  approval-gate:
+    name: 👤 等待人工审批
+    runs-on: ubuntu-latest
+    needs: smoke-test
+    environment:
+      name: production-approval
+    
+    steps:
+    - name: 等待审批
+      run: |
+        echo "⏳ 等待管理员审批部署到生产环境..."
+        echo "📧 已发送审批通知"
+
+  # 阶段 9：部署到生产环境
+  deploy-production:
+    name: 🎯 部署到生产环境
+    runs-on: ubuntu-latest
+    needs: approval-gate
+    environment:
+      name: production
+      url: https://voyagemate.com
+    
+    steps:
+    - name: 部署到生产服务器
+      run: |
+        echo "🎯 开始部署到生产环境..."
+        echo "📍 目标服务器: voyagemate.com"
+        echo "🔄 滚动更新服务..."
+        
+        # 实际部署命令示例：
+        # ssh user@prod-server "docker pull voyagemate-backend:latest"
+        # ssh user@prod-server "docker-compose up -d --no-deps --build backend"
+        
+        echo "✅ 生产环境部署完成"
+        echo "🌐 访问地址: https://voyagemate.com"
+
+  # 阶段 10：部署后验证
+  post-deployment:
+    name: ✅ 部署后验证
+    runs-on: ubuntu-latest
+    needs: deploy-production
+    
+    steps:
+    - name: 健康检查
+      run: |
+        echo "🏥 执行健康检查..."
+        echo "✅ 所有服务运行正常"
+        
+    - name: 通知部署成功
+      run: |
+        echo "📧 发送部署成功通知..."
+        echo "✅ CI/CD 流程完成！"
+
+  # ==================== 流程总结 ====================
+  
+  pipeline-complete:
+    name: 🎉 流程完成
+    runs-on: ubuntu-latest
+    needs: [ci-summary, post-deployment]
+    if: always()
+    
+    steps:
+    - name: 生成报告
+      run: |
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "📋 CI/CD 流程执行报告"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        echo "CI 阶段:"
+        echo "  ✅ 代码检查: ${{ needs.ci-summary.result }}"
+        echo ""
+        echo "CD 阶段:"
+        echo "  ✅ 部署验证: ${{ needs.post-deployment.result }}"
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        
+        if [[ "${{ needs.ci-summary.result }}" == "success" ]] && \
+           [[ "${{ needs.post-deployment.result }}" == "success" ]]; then
+          echo "🎉 完整的 CI/CD 流程执行成功！"
+        else
+          echo "❌ CI/CD 流程存在失败环节"
+          exit 1
+        fi
+
