@@ -20,7 +20,7 @@ const UserHomepage = () => {
   const fetchUserHomepage = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`https://localhost:8080/api/users/homepage/${userId}`, {
+      const response = await fetch(`/api/users/homepage/${userId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
