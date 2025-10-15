@@ -1,4 +1,4 @@
-name: 完整 CI/CD 流程（实际可用版）
+name: FINAL CI/CD
 
 on:
   pull_request:
