@@ -46,8 +46,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request, HttpSession session) {
-        // ❌ 故意制造运行时错误：除以零
-        int error = 10 / 0;
+        
 
         AuthResponse response = authService.login(request, session);
         return ResponseEntity.ok(response);
