@@ -234,31 +234,6 @@ fi
 echo ""
 
 # ============================================
-# 第 8 步：健康检查
-# ============================================
-echo "🏥 [8/8] 执行健康检查..."
-sleep 5
-
-# 检查各服务
-check_service() {
-    local name=$1
-    local url=$2
-    
-    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" $url 2>/dev/null || echo "000")
-    if [ "$HTTP_CODE" = "200" ]; then
-        echo "   ✅ $name 健康检查通过 (HTTP 200)"
-        return 0
-    else
-        echo "   ⚠️  $name 健康检查失败 (HTTP $HTTP_CODE)"
-        return 1
-    fi
-}
-
-check_service "Backend" "http://localhost:$BACKEND_PORT/actuator/health"
-check_service "Frontend" "http://localhost:$FRONTEND_PORT"
-check_service "Embedding" "http://localhost:$EMBEDDING_PORT/health" || true
-check_service "RAG" "http://localhost:$RAG_PORT/health" || true
-
 echo ""
 
 # ============================================
