@@ -5,8 +5,8 @@ updates:
   - package-ecosystem: "maven"
     directory: "/backend"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
+      interval: "monthly"  # 改为每月检查一次
+    open-pull-requests-limit: 2  # 限制最多2个PR
     labels:
       - "dependencies"
       - "backend"
@@ -20,8 +20,8 @@ updates:
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
+      interval: "monthly"  # 改为每月检查一次，减少频率
+    open-pull-requests-limit: 2  # 限制最多2个PR
     labels:
       - "dependencies"
       - "frontend"
@@ -35,8 +35,8 @@ updates:
   - package-ecosystem: "pip"
     directory: "/embedding-service"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
+      interval: "monthly"
+    open-pull-requests-limit: 2
     labels:
       - "dependencies"
       - "python"
@@ -50,8 +50,8 @@ updates:
   - package-ecosystem: "pip"
     directory: "/rag-service"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
+      interval: "monthly"
+    open-pull-requests-limit: 2
     labels:
       - "dependencies"
       - "python"
@@ -65,8 +65,8 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
+      interval: "monthly"
+    open-pull-requests-limit: 2
     labels:
       - "dependencies"
       - "github-actions"
