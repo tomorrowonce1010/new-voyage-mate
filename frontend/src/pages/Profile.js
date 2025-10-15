@@ -97,7 +97,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
     formData.append('avatar', file);
 
     try {
-      const response = await fetch(`${API_BASE}/users/avatar`, {
+      const response = await fetch(`/api/users/avatar`, {
         method: 'POST',
         credentials: 'include',
         body: formData
@@ -141,7 +141,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
   const fetchUserProfile = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('${API_BASE}/users/profile', {
+      const response = await fetch('/api/users/profile', {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -184,7 +184,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
   // 更新用户档案
   const updateUserProfile = async (updates) => {
     try {
-      const response = await fetch('${API_BASE}/users/profile', {
+      const response = await fetch('/api/users/profile', {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -209,7 +209,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
   // 更新用户偏好
   const updateUserPreferences = async (preferences) => {
     try {
-      const response = await fetch('${API_BASE}/users/preferences', {
+      const response = await fetch('/api/users/preferences', {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -663,7 +663,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
     const { destinationId, city } = deleteConfirmData;
 
     try {
-      const response = await fetch(`${API_BASE}/users/destinations/wishlist/${destinationId}`, {
+      const response = await fetch(`/api/users/destinations/wishlist/${destinationId}`, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -711,7 +711,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
   // 添加目的地
   const addDestination = async (formData) => {
     try {
-      const response = await fetch('${API_BASE}/users/destinations/history', {
+      const response = await fetch('/api/users/destinations/history', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -769,7 +769,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
   // 添加期望目的地
   const addWishlist = async (formData) => {
     try {
-      const response = await fetch('${API_BASE}/users/destinations/wishlist', {
+      const response = await fetch('/api/users/destinations/wishlist', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -827,7 +827,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
     if (window.confirm('确定要退出登录吗？')) {
       try {
         // 调用后端登出接口
-        await fetch('${API_BASE}/auth/logout', {
+        await fetch('/api/auth/logout', {
           method: 'POST',
           credentials: 'include',
         });
@@ -847,7 +847,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
   // API调用函数
   const callAIAPI = async (url, requestData) => {
     try {
-      const response = await fetch(`${API_BASE}${url}`, {
+      const response = await fetch(`/api${url}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -943,7 +943,7 @@ const Profile = ({ user, onLogout, onUpdateUser }) => {
         days: days
       };
 
-      const response = await fetch('${API_BASE}/users/destinations/history', {
+      const response = await fetch('/api/users/destinations/history', {
         method: 'POST',
         credentials: 'include',
         headers: {

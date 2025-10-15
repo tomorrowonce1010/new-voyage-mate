@@ -85,7 +85,8 @@ jobs:
   deploy-staging:
     name: 🚀 部署到测试环境
     runs-on: ubuntu-latest
-    needs: build-docker
+    needs: ci-summary
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.ci-summary.result == 'success'
     environment:
       name: staging
       url: http://1.94.200.25:8080  # Backend 测试环境
@@ -125,6 +126,7 @@ jobs:
     name: 💨 冒烟测试
     runs-on: ubuntu-latest
     needs: deploy-staging
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.deploy-staging.result == 'success'
     
     steps:
     - name: 执行冒烟测试
@@ -185,6 +187,7 @@ jobs:
     name: 👤 等待人工审批
     runs-on: ubuntu-latest
     needs: smoke-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.smoke-test.result == 'success'
     # 如果不需要人工审批，可以注释掉下面的 environment 配置
     # environment:
     #   name: production-approval
@@ -204,6 +207,7 @@ jobs:
     name: 🎯 部署到生产环境
     runs-on: ubuntu-latest
     needs: approval-gate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.approval-gate.result == 'success'
     environment:
       name: production
       url: http://1.94.200.25:8080  # 生产环境
@@ -243,6 +247,7 @@ jobs:
     name: ✅ 部署后验证
     runs-on: ubuntu-latest
     needs: deploy-production
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.deploy-production.result == 'success'
     
     steps:
     - name: 健康检查和验证

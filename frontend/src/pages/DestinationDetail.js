@@ -86,7 +86,7 @@ const DestinationDetail = () => {
 
   const fetchDestinationData = async () => {
     try {
-      const response = await fetch(`${API_BASE}/destinations/${id}`);
+      const response = await fetch(`/api/destinations/${id}`);
       if (response.ok) {
         const data = await response.json();
         setDestinationData(data);
@@ -114,12 +114,12 @@ const DestinationDetail = () => {
         // 语义搜索 + 标签组合
         console.log("景点搜索: semantic + tags combined");
         const tagParams = selectedTags.map(tag => `tags=${encodeURIComponent(tag)}`).join('&');
-        url = `${API_BASE}/attractions/semantic-search-by-tags/${id}?${tagParams}&keyword=${encodeURIComponent(debouncedSearchText.trim())}&page=${currentPage}&size=8`;
+        url = `/api/attractions/semantic-search-by-tags/${id}?${tagParams}&keyword=${encodeURIComponent(debouncedSearchText.trim())}&page=${currentPage}&size=8`;
         isPaginatedResult = true; // 语义搜索现在支持分页
       } else if (hasSearchText) {
         // 纯语义搜索
         console.log("景点搜索: semantic search");
-        url = `${API_BASE}/attractions/semantic-search/${id}?keyword=${encodeURIComponent(debouncedSearchText.trim())}&page=${currentPage}&size=8`;
+        url = `/api/attractions/semantic-search/${id}?keyword=${encodeURIComponent(debouncedSearchText.trim())}&page=${currentPage}&size=8`;
         isPaginatedResult = true; // 语义搜索现在支持分页
       } else if (hasTags) {
         // 纯标签过滤（支持分页）
@@ -128,7 +128,7 @@ const DestinationDetail = () => {
         params.append('page', currentPage);
         params.append('size', 8);
         params.append('tag', selectedTags.join(','));
-        url = `${API_BASE}/attractions/destination/${id}?${params.toString()}`;
+        url = `/api/attractions/destination/${id}?${params.toString()}`;
         isPaginatedResult = true;
       } else {
         // 默认热门景点（支持分页）
@@ -136,7 +136,7 @@ const DestinationDetail = () => {
         const params = new URLSearchParams();
         params.append('page', currentPage);
         params.append('size', 8);
-        url = `${API_BASE}/attractions/destination/${id}?${params.toString()}`;
+        url = `/api/attractions/destination/${id}?${params.toString()}`;
         isPaginatedResult = true;
       }
 
@@ -185,7 +185,7 @@ const DestinationDetail = () => {
     await Promise.all(
       attractionList.map(async (attraction) => {
         try {
-          const response = await fetch(`${API_BASE}/attractions/${attraction.id}/top-tags?count=3`);
+          const response = await fetch(`/api/attractions/${attraction.id}/top-tags?count=3`);
           if (response.ok) {
             const tags = await response.json();
             newAttractionTags[attraction.id] = tags;
@@ -204,7 +204,7 @@ const DestinationDetail = () => {
 
   const fetchTopTags = async () => {
     try {
-      const response = await fetch(`${API_BASE}/destinations/${id}/top-tags?count=6`);
+      const response = await fetch(`/api/destinations/${id}/top-tags?count=6`);
       if (response.ok) {
         const tags = await response.json();
         setTopTags(tags);
@@ -219,7 +219,7 @@ const DestinationDetail = () => {
   // 获取所有目的地标签
   const fetchAllTags = async () => {
     try {
-      const response = await fetch('${API_BASE}/destinations/tags');
+      const response = await fetch('/api/destinations/tags');
       if (response.ok) {
         const tags = await response.json();
         setAllTags(tags);
