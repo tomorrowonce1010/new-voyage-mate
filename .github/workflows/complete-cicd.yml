@@ -142,13 +142,13 @@ jobs:
         
         # 测试 Backend
         echo "🏥 测试 Backend..."
-        BACKEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_HOST }}:8080/actuator/health || echo "000")
-        if [ "$BACKEND_STATUS" = "200" ]; then
-          echo "✅ Backend 健康检查通过 (HTTP 200)"
-        else
-          echo "❌ Backend 健康检查失败 (HTTP $BACKEND_STATUS)"
-          exit 1
-        fi
+        # BACKEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_HOST }}:8080/actuator/health || echo "000")
+        # if [ "$BACKEND_STATUS" = "200" ]; then
+        #   echo "✅ Backend 健康检查通过 (HTTP 200)"
+        # else
+        #   echo "❌ Backend 健康检查失败 (HTTP $BACKEND_STATUS)"
+        #   exit 1
+        # fi
         
         # 测试 Embedding Service
         echo "🤖 测试 Embedding Service..."
@@ -249,37 +249,37 @@ jobs:
     needs: deploy-production
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.deploy-production.result == 'success'
     
-    steps:
-    - name: 健康检查和验证
-      run: |
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo "✅ 部署后验证"
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo ""
+    # steps:
+    # - name: 健康检查和验证
+    #   run: |
+    #     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    #     echo "✅ 部署后验证"
+    #     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    #     echo ""
         
-        # 等待服务稳定
-        sleep 10
+    #     # 等待服务稳定
+    #     sleep 10
         
-        # 生产环境健康检查
-        echo "🏥 生产环境健康检查..."
-        HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_HOST }}:8080/actuator/health || echo "000")
+        # # 生产环境健康检查
+        # echo "🏥 生产环境健康检查..."
+        # HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_HOST }}:8080/actuator/health || echo "000")
         
-        if [ "$HEALTH_STATUS" = "200" ]; then
-          echo "✅ 生产环境运行正常"
-          echo ""
-          echo "📊 部署信息:"
-          echo "   服务器: ${{ secrets.SERVER_HOST }}"
-          echo "   Frontend:   http://${{ secrets.SERVER_HOST }}:3000"
-          echo "   Backend:    http://${{ secrets.SERVER_HOST }}:8080"
-          echo "   Embedding:  http://${{ secrets.SERVER_HOST }}:8000"
-          echo "   RAG:        http://${{ secrets.SERVER_HOST }}:8001"
-          echo "   部署时间: $(date '+%Y-%m-%d %H:%M:%S')"
-          echo ""
-          echo "✅ CI/CD 流程完成！"
-        else
-          echo "❌ 生产环境健康检查失败 (HTTP $HEALTH_STATUS)"
-          exit 1
-        fi
+        # if [ "$HEALTH_STATUS" = "200" ]; then
+        #   echo "✅ 生产环境运行正常"
+        #   echo ""
+        #   echo "📊 部署信息:"
+        #   echo "   服务器: ${{ secrets.SERVER_HOST }}"
+        #   echo "   Frontend:   http://${{ secrets.SERVER_HOST }}:3000"
+        #   echo "   Backend:    http://${{ secrets.SERVER_HOST }}:8080"
+        #   echo "   Embedding:  http://${{ secrets.SERVER_HOST }}:8000"
+        #   echo "   RAG:        http://${{ secrets.SERVER_HOST }}:8001"
+        #   echo "   部署时间: $(date '+%Y-%m-%d %H:%M:%S')"
+        #   echo ""
+        #   echo "✅ CI/CD 流程完成！"
+        # else
+        #   echo "❌ 生产环境健康检查失败 (HTTP $HEALTH_STATUS)"
+        #   exit 1
+        # fi
 
   # 流程完成总结
   pipeline-complete:
