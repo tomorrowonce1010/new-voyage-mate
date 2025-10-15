@@ -20,6 +20,12 @@ public class User {
     @Column(name = "email", length = 100, unique = true, nullable = false)
     private String email;
     
+    @Column(name = "avatar_url", length = 255)
+    private String avatarUrl;
+    
+    @Column(name = "signature", length = 500)
+    private String signature;
+    
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     

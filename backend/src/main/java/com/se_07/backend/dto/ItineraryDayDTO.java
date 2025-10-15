@@ -18,6 +18,8 @@ public class ItineraryDayDTO {
     private Long firstActivityId;
     private Long lastActivityId;
     private String notes;
+    private String accommodation;
+    private String weatherInfo;
     private BigDecimal actualCost;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

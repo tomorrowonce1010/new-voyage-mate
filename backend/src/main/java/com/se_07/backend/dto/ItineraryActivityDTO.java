@@ -16,6 +16,7 @@ public class ItineraryActivityDTO {
     private Long nextId;
     private String title;
     private String transportMode;
+    private String transportNotes;
     private Attraction attraction;
     private LocalTime startTime;
     private LocalTime endTime;
