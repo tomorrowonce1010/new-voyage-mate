@@ -192,9 +192,9 @@ fi
 echo ""
 
 # ============================================
-# 第 7 步：构建并启动 Frontend
+# 第 7 步：构建 Frontend 并通过 Nginx 发布
 # ============================================
-echo "🎨 [7/8] 构建并启动 Frontend..."
+echo "🎨 [7/8] 构建 Frontend 并发布到 Nginx..."
 cd $PROJECT_DIR/frontend
 
 # 安装/更新依赖
@@ -205,26 +205,22 @@ CI=false npm run build
 
 if [ $? -eq 0 ]; then
     echo "   ✅ Frontend 构建成功"
-    
-    # 检查是否安装了 serve
-    if ! command -v serve &> /dev/null; then
-        echo "   安装 serve..."
-        npm install -g serve
-    fi
-    
-    # 启动 Frontend
-    export NODE_OPTIONS="--max-old-space-size=512"
-    nohup serve -s build -l $FRONTEND_PORT > $PROJECT_DIR/frontend.log 2>&1 &
-    echo $! > frontend.pid
-    
-    FRONTEND_PID=$(cat frontend.pid)
-    echo "   Frontend 启动中... (PID: $FRONTEND_PID)"
-    sleep 5
-    
-    if ps -p $FRONTEND_PID > /dev/null; then
-        echo "   ✅ Frontend 运行中 (端口: $FRONTEND_PORT)"
+
+    # 目标静态目录（Nginx 根目录）
+    NGINX_ROOT_DIR="/var/www/voyagemate"
+
+    echo "   同步静态资源到 $NGINX_ROOT_DIR ..."
+    sudo mkdir -p "$NGINX_ROOT_DIR"
+    sudo rm -rf "$NGINX_ROOT_DIR"/*
+    sudo cp -r build/* "$NGINX_ROOT_DIR"/
+
+    echo "   校验 Nginx 配置..."
+    if sudo nginx -t; then
+        echo "   重新加载 Nginx..."
+        sudo systemctl reload nginx || sudo systemctl restart nginx
+        echo "   ✅ Nginx 已重新加载"
     else
-        echo "   ❌ Frontend 启动失败"
+        echo "   ❌ Nginx 配置校验失败"
         exit 1
     fi
 else
@@ -249,7 +245,7 @@ echo "   Elasticsearch: $(systemctl is-active elasticsearch)"
 echo "   Backend:     http://1.94.200.25:$BACKEND_PORT"
 echo "   Embedding:   http://1.94.200.25:$EMBEDDING_PORT"
 echo "   RAG:         http://1.94.200.25:$RAG_PORT"
-echo "   Frontend:    http://1.94.200.25:$FRONTEND_PORT"
+echo "   Frontend:    http://1.94.200.25 (Nginx)"
 echo ""
 echo "📝 查看日志:"
 echo "   Backend:    tail -f $PROJECT_DIR/backend.log"
