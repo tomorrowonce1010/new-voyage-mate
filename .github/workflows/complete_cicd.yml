@@ -1,13 +1,13 @@
 name: FINAL CI/CD
 
 on:
-  # ✅ 修改1：去掉 push develop，只保留 main，用于 PR 场景更清晰
+  # ✅ PR 阶段：只运行 CI；Merge 后 push 到 main：运行 CI + CD
   workflow_dispatch:  # 支持手动触发
   pull_request:
-    branches: [ main ]   # ✅ 修改1
-    types: [opened, synchronize, reopened, closed]  # ✅ 修改1
+    branches: [ main ]
+    types: [opened, synchronize, reopened]  # PR 打开、更新、重新打开时运行 CI
   push:
-    branches: [ main ]   # ✅ 修改1
+    branches: [ main ]  # PR 合并后触发，运行 CI + CD
 
 jobs:
   # ==================== CI 阶段 ====================
@@ -60,22 +60,17 @@ jobs:
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo " ✅ CI 核心检查通过！"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              echo "status=success-pr" >> $GITHUB_OUTPUT
-              exit 0
-            else
-              echo "status=success" >> $GITHUB_OUTPUT
-            fi
+            echo "status=success" >> $GITHUB_OUTPUT
           fi
 
   # ==================== CD 阶段 ====================
-  # ✅ 修改2：CD 阶段仅在 PR 合并到 main 且 CI 成功时触发
+  # ✅ 修改2：CD 阶段仅在推送到 main 分支且 CI 成功时触发
 
   deploy-staging:
     name: 部署到测试环境
     runs-on: ubuntu-latest
     needs: ci-summary
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && needs.ci-summary.outputs.ci_status == 'success'  # ✅ 修改2
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.ci-summary.outputs.ci_status == 'success'  # ✅ 修改2：PR合并后会触发push事件
     environment:
       name: staging
       url: http://1.94.200.25:8080
@@ -97,33 +92,30 @@ jobs:
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
             'bash /root/voyagemate/new-voyage-mate/scripts/deploy-full.sh'
 
-  # ✅ 修改3：冒烟测试条件一致
   smoke-test:
     name: 冒烟测试
     runs-on: ubuntu-latest
     needs: deploy-staging
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && needs.ci-summary.outputs.ci_status == 'success'  # ✅ 修改3
+    # 依赖 deploy-staging，它已经检查了条件，所以这里不需要重复检查
     steps:
       - name: 执行冒烟测试
         run: |
           echo "执行冒烟测试..."
 
-  # ✅ 修改4：人工审批逻辑同样跟随 CI 成功 + PR 合并
   approval-gate:
     name: 等待人工审批
     runs-on: ubuntu-latest
     needs: smoke-test
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && needs.ci-summary.outputs.ci_status == 'success'  # ✅ 修改4
+    # 依赖 smoke-test，条件已传递
     steps:
       - name: 等待审批
         run: echo "等待管理员审批..."
 
-  # ✅ 修改5：生产环境部署同理（CI 成功 + PR 合并）
   deploy-production:
     name: 部署到生产环境
     runs-on: ubuntu-latest
     needs: approval-gate
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && needs.ci-summary.outputs.ci_status == 'success'  # ✅ 修改5
+    # 依赖 approval-gate，条件已传递
     steps:
       - name: 部署
         run: echo "生产环境部署完成 ✅"
