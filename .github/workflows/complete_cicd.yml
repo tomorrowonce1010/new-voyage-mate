@@ -75,7 +75,7 @@ jobs:
     name: 部署到测试环境
     runs-on: ubuntu-latest
     needs: ci-summary
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && needs.ci-summary.outputs.ci_status == 'success'  # ✅ 修改2
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.ci-summary.outputs.ci_status == 'success'
     environment:
       name: staging
       url: http://1.94.200.25:8080
@@ -102,7 +102,7 @@ jobs:
     name: 冒烟测试
     runs-on: ubuntu-latest
     needs: deploy-staging
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && needs.ci-summary.outputs.ci_status == 'success'  # ✅ 修改3
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.ci-summary.outputs.ci_status == 'success'
     steps:
       - name: 执行冒烟测试
         run: |
@@ -113,7 +113,7 @@ jobs:
     name: 等待人工审批
     runs-on: ubuntu-latest
     needs: smoke-test
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && needs.ci-summary.outputs.ci_status == 'success'  # ✅ 修改4
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.ci-summary.outputs.ci_status == 'success'
     steps:
       - name: 等待审批
         run: echo "等待管理员审批..."
@@ -123,7 +123,7 @@ jobs:
     name: 部署到生产环境
     runs-on: ubuntu-latest
     needs: approval-gate
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && needs.ci-summary.outputs.ci_status == 'success'  # ✅ 修改5
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.ci-summary.outputs.ci_status == 'success'
     steps:
       - name: 部署
         run: echo "生产环境部署完成 ✅"
