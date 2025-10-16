@@ -505,7 +505,7 @@ public class UserServiceImpl implements UserService {
             }
 
             // 创建上传目录
-            String uploadDir = "uploads/avatars/";
+            String uploadDir = "../uploads/avatars/";
             Path uploadPath = Paths.get(uploadDir);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
@@ -519,7 +519,7 @@ public class UserServiceImpl implements UserService {
             Path filePath = uploadPath.resolve(fileName);
             Files.copy(file.getInputStream(), filePath);
 
-            // 构建访问URL
+            // 构建访问URL - 确保与StaticResourceConfig一致
             String avatarUrl = "/avatars/" + fileName;
 
             // 更新用户头像URL
