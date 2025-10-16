@@ -36,7 +36,7 @@ jobs:
     - name: Run tests
       working-directory: ./backend
       run: mvn test
-      continue-on-error: true
+      # continue-on-error: true
       
     - name: Generate JaCoCo coverage report
       working-directory: ./backend
