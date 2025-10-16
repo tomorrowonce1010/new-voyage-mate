@@ -9,6 +9,8 @@ import com.se_07.backend.repository.UserAuthRepository;
 import com.se_07.backend.repository.UserRepository;
 import com.se_07.backend.service.AuthService;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,12 +21,16 @@ import java.util.Optional;
 
 @Service
 public class AuthServiceImpl implements AuthService {
+    private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     @Autowired
     private UserRepository userRepository;
     
     @Autowired
     private UserAuthRepository userAuthRepository;
+    
+    @Autowired
+    private ElasticsearchIndexService elasticsearchIndexService;
     
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -64,6 +70,16 @@ public class AuthServiceImpl implements AuthService {
             session.setAttribute("userId", user.getId());
             session.setAttribute("username", user.getUsername());
             session.setAttribute("email", user.getEmail());
+            
+            // 将用户索引到Elasticsearch的authors索引中
+            try {
+                logger.info("开始将新注册用户 {} 索引到Elasticsearch", user.getId());
+                elasticsearchIndexService.indexUserToElasticsearch(user);
+                logger.info("用户 {} 索引到Elasticsearch的请求已提交", user.getId());
+            } catch (Exception e) {
+                logger.error("索引用户到Elasticsearch失败，但不影响注册流程: {}", e.getMessage(), e);
+                // 这里我们不将异常传递给用户，因为索引失败不应该影响注册流程
+            }
             
             response.setSuccess(true);
             response.setMessage("注册成功");
