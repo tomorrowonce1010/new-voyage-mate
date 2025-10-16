@@ -68,7 +68,7 @@ jobs:
       continue-on-error: true
         
     - name: Upload coverage reports
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       if: always() && hashFiles('embedding-service/coverage.xml') != ''
       with:
         files: ./embedding-service/coverage.xml
@@ -129,7 +129,7 @@ jobs:
       continue-on-error: true
         
     - name: Upload coverage reports
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       if: always() && hashFiles('rag-service/coverage.xml') != ''
       with:
         files: ./rag-service/coverage.xml

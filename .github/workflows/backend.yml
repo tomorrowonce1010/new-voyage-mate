@@ -60,7 +60,7 @@ jobs:
       continue-on-error: true
       
     - name: Upload coverage reports
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       if: always() && hashFiles('backend/target/site/jacoco/jacoco.xml') != ''
       with:
         files: ./backend/target/site/jacoco/jacoco.xml
