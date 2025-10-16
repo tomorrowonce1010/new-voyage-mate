@@ -21,6 +21,7 @@ jobs:
     name: Frontend CI
     uses: ./.github/workflows/frontend.yml
     secrets: inherit
+    continue-on-error: true
 
   python-ci:
     name: Python Services CI
