@@ -7,7 +7,7 @@ const UserGuideModal = ({ isVisible, onClose }) => {
 
   const guideContent = `
 
-## 🔍Explore - 探索精彩
+## 🔍Explore - 探索
 - **不必担心“景点荒”**——收录热门旅游城市及万余条旅游景点，进入目的地城市的详情页面后，
   我们为您提供景点检索、地图浏览、天气信息查询等功能。
   您可以在这里将感兴趣的景点拖入左下角“中转站”区域内。
