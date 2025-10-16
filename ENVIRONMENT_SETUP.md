@@ -10,37 +10,50 @@
 
 ### 1. 后端配置
 
-#### 1.1 复制环境变量模板
+#### 1.1 本地开发环境
 
-```bash
-cd /path/to/new-voyage-mate
-cp .env.example .env
-```
+**重要**：Spring Boot **不会**自动读取根目录的 `.env` 文件。
 
-#### 1.2 编辑 `.env` 文件并填入真实的配置值
-
-```bash
-# 数据库配置
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=voyagemate
-DB_USERNAME=你的数据库用户名
-DB_PASSWORD=你的数据库密码
-
-# DeepSeek AI 配置
-DEEPSEEK_API_KEY=你的DeepSeek_API_Key
-DEEPSEEK_API_URL=https://api.deepseek.com/v1/chat/completions
-```
-
-#### 1.3 Spring Boot 读取环境变量
-
-`backend/src/main/resources/application.properties` 已配置为从环境变量读取：
+对于**本地开发**，`application.properties` 中已设置了默认值：
 
 ```properties
 spring.datasource.url=jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:voyagemate}?...
 spring.datasource.username=${DB_USERNAME:voyagemate}
-spring.datasource.password=${DB_PASSWORD:}
-deepseek.api.key=${DEEPSEEK_API_KEY:}
+spring.datasource.password=${DB_PASSWORD:se_202507}
+deepseek.api.key=${DEEPSEEK_API_KEY:sk-8f509d23895446bca1f7e5803545e34a}
+```
+
+✅ 无需额外配置即可在本地运行。
+
+#### 1.2 生产环境部署
+
+在生产环境中，**必须**通过环境变量覆盖默认值：
+
+**方法1：设置系统环境变量**
+```bash
+export DB_HOST=your_prod_host
+export DB_USERNAME=your_prod_user
+export DB_PASSWORD=your_prod_password
+export DEEPSEEK_API_KEY=your_prod_api_key
+
+# 然后启动应用
+cd backend
+mvn spring-boot:run
+```
+
+**方法2：使用启动参数**
+```bash
+java -jar backend.jar \
+  -DDB_HOST=your_prod_host \
+  -DDB_USERNAME=your_prod_user \
+  -DDB_PASSWORD=your_prod_password \
+  -DDEEPSEEK_API_KEY=your_prod_api_key
+```
+
+**方法3：使用 Spring Boot 的 application-prod.properties**
+```bash
+# 创建 backend/src/main/resources/application-prod.properties
+# 然后使用 --spring.profiles.active=prod 启动
 ```
 
 ### 2. 前端配置
