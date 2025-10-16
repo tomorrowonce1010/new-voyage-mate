@@ -41,6 +41,13 @@ public class GroupChatManageServiceImpl implements GroupChatManageService {
 
     @Override
     public void addUserToGroup(Long groupId, Long userId) {
+        // 检查用户是否已经在群组中，避免主键冲突
+        GroupChatMember existingMember = groupChatMemberRepository.findByGroupIdAndUserId(groupId, userId);
+        if (existingMember != null) {
+            // 用户已经在群组中，无需重复添加
+            return;
+        }
+        
         GroupChatMember member = new GroupChatMember();
         member.setGroupId(groupId);
         member.setUserId(userId);
@@ -101,7 +108,9 @@ public class GroupChatManageServiceImpl implements GroupChatManageService {
         creator.setUserId(creatorUserId);
         groupChatMemberRepository.save(creator);
         // 其他成员入群（去重，排除创建者）
-        for (Long userId : memberIds) {
+        // 使用Set去重，避免memberIds中有重复值导致主键冲突
+        java.util.Set<Long> uniqueMemberIds = new java.util.HashSet<>(memberIds);
+        for (Long userId : uniqueMemberIds) {
             if (!userId.equals(creatorUserId)) {
                 GroupChatMember member = new GroupChatMember();
                 member.setGroupId(group.getGroupId());

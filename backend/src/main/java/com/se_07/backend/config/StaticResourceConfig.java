@@ -10,23 +10,25 @@ import java.nio.file.Paths;
 @Configuration
 public class StaticResourceConfig implements WebMvcConfigurer {
 
-    @PostConstruct
-    public void init() {
-        System.out.println("✅ StaticResourceConfig 已加载");
-    }
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String uploadPath = "file:/root/voyagemate/new-voyage-mate/uploads/";
 
-        // 不带 /api 前缀
         registry.addResourceHandler("/images/**")
                 .addResourceLocations(uploadPath + "images/");
-
         registry.addResourceHandler("/covers/**")
                 .addResourceLocations(uploadPath + "covers/");
-
         registry.addResourceHandler("/avatars/**")
                 .addResourceLocations(uploadPath + "avatars/");
+
+        System.out.println("✅ 静态资源映射完成:");
+        System.out.println("    /images/** -> " + uploadPath + "images/");
+    }
+
+        @PostConstruct
+    public void init() {
+        System.out.println("✅ StaticResourceConfig 已加载");
+        File testFile = new File("/root/voyagemate/new-voyage-mate/uploads/images/destinations/shenzhen.jpg");
+        System.out.println("📂 测试图片存在？ " + testFile.exists());
     }
 }
