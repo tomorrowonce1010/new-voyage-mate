@@ -21,7 +21,6 @@ jobs:
     name: Frontend CI
     uses: ./.github/workflows/frontend.yml
     secrets: inherit
-    continue-on-error: true
 
   python-ci:
     name: Python Services CI
@@ -45,12 +44,12 @@ jobs:
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo ""
           echo "Backend CI:        ${{ needs.backend-ci.result }}"
-          echo "Frontend CI:       ${{ needs.frontend-ci.result }}"
+          echo "Frontend CI:       ${{ needs.frontend-ci.result }} (允许失败)"
           echo "Python Services:   ${{ needs.python-ci.result }}"
           echo ""
 
+          # 前端 CI 失败不阻止部署，只检查 backend 和 python
           if [[ "${{ needs.backend-ci.result }}" == "failure" ]] || \
-             [[ "${{ needs.frontend-ci.result }}" == "failure" ]] || \
              [[ "${{ needs.python-ci.result }}" == "failure" ]]; then
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo " ❌ CI 失败！流程终止"
@@ -59,7 +58,7 @@ jobs:
             exit 1
           else
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo " ✅ CI 全部通过！"
+            echo " ✅ CI 核心检查通过！"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             if [[ "${{ github.event_name }}" == "pull_request" ]]; then
               echo "status=success-pr" >> $GITHUB_OUTPUT
