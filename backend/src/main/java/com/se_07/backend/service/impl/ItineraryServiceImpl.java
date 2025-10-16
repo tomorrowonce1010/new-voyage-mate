@@ -104,7 +104,7 @@ public class ItineraryServiceImpl implements ItineraryService {
     private com.se_07.backend.repository.AttractionRepository attractionRepository;
 
     // 将封面图片保存到 uploads/covers 目录（外部可写），由资源映射提供访问
-    private static final String UPLOAD_DIR = "uploads/covers/";
+    private static final String UPLOAD_DIR = "../uploads/covers/";
 
     // 用于生成分享码的字符集
     private static final String SHARE_CODE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

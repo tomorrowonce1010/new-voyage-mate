@@ -122,7 +122,7 @@ const Manage = () => {
           visibility: itinerary.permissionStatus === '私人' ? 'private' :
               itinerary.permissionStatus === '仅获得链接者可见' ? 'link' : 'public',
           editStatus: itinerary.editStatus,
-          coverImage: itinerary.imageUrl ? `/api${itinerary.imageUrl}` : null,
+          coverImage: itinerary.imageUrl ? `/api/static${itinerary.imageUrl}` : null,
           isTeamItinerary: false,
           isGroupCreator: false,
           groupTitle: null,
@@ -152,7 +152,7 @@ const Manage = () => {
           visibility: itinerary.permissionStatus === '私人' ? 'private' :
               itinerary.permissionStatus === '仅获得链接者可见' ? 'link' : 'public',
           editStatus: itinerary.editStatus,
-          coverImage: itinerary.imageUrl ? `/api${itinerary.imageUrl}` : null,
+          coverImage: itinerary.imageUrl ? `/api/static${itinerary.imageUrl}` : null,
           isTeamItinerary: true,
           isGroupCreator: itinerary.isGroupCreator || false,
           groupTitle: itinerary.groupTitle,
