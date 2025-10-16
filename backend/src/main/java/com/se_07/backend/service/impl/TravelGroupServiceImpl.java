@@ -318,8 +318,15 @@ public class TravelGroupServiceImpl implements TravelGroupService {
             travelGroupRepository.save(group);
 
             // 2. 通过审核后加入群聊
-            if (group.getGroupChatId() != null) {
-                groupChatManageService.addUserToGroup(group.getGroupChatId(), application.getApplicant().getId());
+            if (group.getGroupChatId() != null && groupChatManageService != null) {
+                try {
+                    groupChatManageService.addUserToGroup(group.getGroupChatId(), application.getApplicant().getId());
+                } catch (Exception e) {
+                    // 记录错误但不中断流程
+                    System.err.println("加入群聊失败: " + e.getMessage());
+                    e.printStackTrace();
+                    // 不抛出异常，继续处理申请
+                }
             }
         }
         
