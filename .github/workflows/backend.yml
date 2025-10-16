@@ -28,10 +28,26 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    
+    # ⚡ 优化：缓存 Maven 本地仓库，加速依赖下载
+    - name: Cache Maven packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
         
     - name: Build with Maven
       working-directory: ./backend
       run: mvn clean package -DskipTests
+    
+    # ⚡ 优化：缓存编译后的 target 目录，供后续 job 复用
+    - name: Cache Maven target
+      uses: actions/cache/save@v4
+      with:
+        path: backend/target
+        key: ${{ runner.os }}-backend-target-${{ github.sha }}
       
     - name: Run tests
       working-directory: ./backend
@@ -76,7 +92,23 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    
+    # ⚡ 优化：恢复 Maven 本地仓库缓存
+    - name: Restore Maven packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    
+    # ⚡ 优化：复用之前编译的 target 目录，避免重新编译
+    - name: Restore Maven target
+      uses: actions/cache/restore@v4
+      with:
+        path: backend/target
+        key: ${{ runner.os }}-backend-target-${{ github.sha }}
         
     - name: Run Maven verify
       working-directory: ./backend
-      run: mvn verify -DskipTests
+      run: mvn verify -DskipTests -Dcheckstyle.skip=false

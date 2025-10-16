@@ -30,6 +30,16 @@ jobs:
         python-version: '3.11'
         cache: 'pip'
         cache-dependency-path: embedding-service/requirements.txt
+    
+    # ⚡ 优化：缓存 pip 包和测试工具，避免重复下载
+    - name: Cache pip packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-embedding-${{ hashFiles('embedding-service/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-embedding-
+          ${{ runner.os }}-pip-
         
     - name: Install dependencies
       working-directory: ./embedding-service
@@ -81,6 +91,16 @@ jobs:
         python-version: '3.11'
         cache: 'pip'
         cache-dependency-path: rag-service/requirements.txt
+    
+    # ⚡ 优化：缓存 pip 包和测试工具，避免重复下载
+    - name: Cache pip packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-rag-${{ hashFiles('rag-service/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-rag-
+          ${{ runner.os }}-pip-
         
     - name: Install dependencies
       working-directory: ./rag-service
