@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useCallback, useImperativeHandle, forwardRef } from 'react';
 import './Map.css';
+import amapConfig from '../config/amapConfig';
 
 window._AMapSecurityConfig = {
-    securityJsCode: '48a09726706b392b4c3c8907ac8cff2b',
+    securityJsCode: amapConfig.securityJsCode,
 };
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -410,8 +411,8 @@ const RouteMap = forwardRef(({ centre, markers = [], isOverview = false }, ref) 
         
         try {
             window.AMapLoader.load({
-                key: '0a98c59a1aac46b8430bed72a75cff36',
-                version: '2.0',
+                key: amapConfig.key,
+                version: amapConfig.version,
                 plugins: ['AMap.Driving', 'AMap.Walking', 'AMap.Transfer', 'AMap.Riding'],
             }).then((AMap) => {
                 console.log('[地图] 高德API加载完成，准备创建地图实例');

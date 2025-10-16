@@ -1,8 +1,9 @@
 import AMapLoader from '@amap/amap-jsapi-loader';
+import amapConfig from '../config/amapConfig';
 
-// 设置高德地图安全密钥
+// 设置高德地图安全密钥（从环境变量读取）
 window._AMapSecurityConfig = {
-    securityJsCode: '48a09726706b392b4c3c8907ac8cff2b',
+    securityJsCode: amapConfig.securityJsCode,
 };
 
 class AMapManager {
@@ -31,8 +32,8 @@ class AMapManager {
         // 开始加载
         this.loading = true;
         this.loadPromise = AMapLoader.load({
-            key: '0a98c59a1aac46b8430bed72a75cff36',
-            version: '2.0',
+            key: amapConfig.key,
+            version: amapConfig.version,
             plugins: plugins
         }).then((AMap) => {
             this.AMap = AMap;

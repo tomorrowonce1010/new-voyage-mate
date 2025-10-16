@@ -2320,7 +2320,7 @@ const EditItinerary = () => {
   // 初始化高德地图搜索
   const initAMapSearch = (keyword) => {
     window.AMapLoader.load({
-      key: '0a98c59a1aac46b8430bed72a75cff36',
+      key: process.env.REACT_APP_AMAP_KEY || '',
       version: '2.0',
       plugins: ['AMap.PlaceSearch', 'AMap.Geocoder']
     }).then((AMap) => {

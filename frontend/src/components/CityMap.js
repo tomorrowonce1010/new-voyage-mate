@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import AMapLoader from '@amap/amap-jsapi-loader';
 import './CityMap.css';
+import amapConfig from '../config/amapConfig';
 
-// 设置高德地图安全密钥
+// 设置高德地图安全密钥（从环境变量读取）
 window._AMapSecurityConfig = {
-    securityJsCode: '48a09726706b392b4c3c8907ac8cff2b',
+    securityJsCode: amapConfig.securityJsCode,
 };
 
 const CityMap = ({ center = [] }) => {
@@ -21,7 +22,7 @@ const CityMap = ({ center = [] }) => {
             }
             setLoading(true);
             AMapLoader.load({
-                key: '0a98c59a1aac46b8430bed72a75cff36',
+                key: amapConfig.key,
                 version: '2.0',
                 plugins: ['AMap.ToolBar', 'AMap.Scale'],
             })
@@ -57,7 +58,7 @@ const CityMap = ({ center = [] }) => {
                 }
                 setLoading(true);
                 AMapLoader.load({
-                    key: '0a98c59a1aac46b8430bed72a75cff36',
+                    key: amapConfig.key,
                     version: '2.0',
                     plugins: ['AMap.ToolBar', 'AMap.Scale'],
                 })
