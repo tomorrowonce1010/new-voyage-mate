@@ -20,9 +20,16 @@ public class StaticResourceConfig implements WebMvcConfigurer {
                 .addResourceLocations(uploadPath + "covers/");
         registry.addResourceHandler("/avatars/**")
                 .addResourceLocations(uploadPath + "avatars/");
+        registry.addResourceHandler("/static/images/**")
+                .addResourceLocations(uploadPath + "images/");
+        registry.addResourceHandler("/static/covers/**")
+                .addResourceLocations(uploadPath + "covers/");
+        registry.addResourceHandler("/static/avatars/**")
+                .addResourceLocations(uploadPath + "avatars/");
+
+
 
         System.out.println("✅ 静态资源映射完成:");
-        System.out.println("    /images/** -> " + uploadPath + "images/");
     }
 
         @PostConstruct

@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @Transactional
 public class ServiceTest {
     // Mock依赖
@@ -44,6 +46,8 @@ public class ServiceTest {
     private GroupChatMemberRepository groupChatMemberRepository;
     @Mock
     private ChatMessageRepository chatMessageRepository;
+    @Mock
+    private com.se_07.backend.repository.UserProfileRepository userProfileRepository;
     @InjectMocks
     private GroupChatServiceImpl groupChatService;
     @InjectMocks
@@ -162,6 +166,8 @@ public class ServiceTest {
         user2.setAvatarUrl("avatar2.png");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
         when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
+        // Mock userProfileRepository to return empty Optional
+        when(userProfileRepository.findByUserId(anyLong())).thenReturn(Optional.empty());
         List<UserProfileResponse> members = groupChatManageService.getGroupMembers(100L);
         assertEquals(2, members.size());
         assertEquals("张三", members.get(0).getUsername());
@@ -170,6 +176,8 @@ public class ServiceTest {
 
     @Test
     public void testAddUserToGroup() {
+        // Mock findByGroupIdAndUserId to return null (user not in group yet)
+        when(groupChatMemberRepository.findByGroupIdAndUserId(100L, 2L)).thenReturn(null);
         GroupChatMember savedMember = new GroupChatMember();
         when(groupChatMemberRepository.save(any(GroupChatMember.class))).thenReturn(savedMember);
         groupChatManageService.addUserToGroup(100L, 2L);
